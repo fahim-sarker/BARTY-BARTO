@@ -5,11 +5,11 @@ import {
   Passenger,
   Settings,
   Signature,
+  Plane,
 } from "./Icons/Svg";
 import { NavLink, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-import Logo from "/logo2.png";
 import { IoAirplaneSharp } from "react-icons/io5";
 
 
@@ -26,6 +26,9 @@ const Sidebar = () => {
       icon: <Passenger />,
       path: "/allpassenger-crew",
     },
+    { label: "Signature", icon: <Signature />, path: "" },
+    { label: "Settings", icon: <Settings />, path: "" },
+    { label: "Flight Stats", icon: <Plane />, path: "/flight-stats" },
     { label: "Signature", icon: <Signature />, path: "/signature" },
     { label: "Settings", icon: <Settings />, path: "/settings" },
   ];
