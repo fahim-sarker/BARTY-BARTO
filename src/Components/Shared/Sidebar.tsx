@@ -5,6 +5,7 @@ import {
   Passenger,
   Settings,
   Signature,
+  Plane,
 } from "./Icons/Svg";
 import { NavLink } from "react-router-dom";
 
@@ -19,6 +20,7 @@ const Sidebar = () => {
     },
     { label: "Signature", icon: <Signature />, path: "" },
     { label: "Settings", icon: <Settings />, path: "" },
+    { label: "Flight Stats", icon: <Plane />, path: "/flight-stats" },
   ];
 
   const handleLogout = () => {
