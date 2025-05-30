@@ -26,8 +26,6 @@ const Sidebar = () => {
       icon: <Passenger />,
       path: "/allpassenger-crew",
     },
-    { label: "Signature", icon: <Signature />, path: "" },
-    { label: "Settings", icon: <Settings />, path: "" },
     { label: "Flight Stats", icon: <Plane />, path: "/flight-stats" },
     { label: "Signature", icon: <Signature />, path: "/signature" },
     { label: "Settings", icon: <Settings />, path: "/settings" },
