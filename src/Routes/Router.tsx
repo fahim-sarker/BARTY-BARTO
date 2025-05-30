@@ -11,6 +11,8 @@ import Dashboardform from "../Pages/Dashboard/Dashboardform";
 import AllpassengerCrew from "../Pages/Dashboard/AllpassengerCrew";
 import CreateFlight from "../Pages/Dashboard/CreateFlight";
 import FlightStats from "../Pages/Dashboard/FlightStats";
+import Signature from "../Pages/Dashboard/Signature";
+import Settings from "../Pages/Dashboard/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +37,8 @@ export const router = createBrowserRouter([
       { path: "/create-flight", element: <CreateFlight /> },
       { path: "/allpassenger-crew", element: <AllpassengerCrew /> },
       { path: "/flight-stats", element: <FlightStats /> },
+      { path: "/signature", element: <Signature /> },
+      { path: "/settings", element: <Settings /> },
     ],
   },
 ]);

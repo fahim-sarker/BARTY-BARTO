@@ -264,7 +264,7 @@ const AllPassengerCrew: React.FC = () => {
         pagination={false}
         bordered
         size="middle"
-        scroll={{ x: 600 }} // Horizontal scroll for larger tables on smaller screens
+        scroll={{ x: 1020}} // Horizontal scroll for larger tables on smaller screens
       />
     </div>
   );
