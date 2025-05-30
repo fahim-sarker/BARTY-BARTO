@@ -172,6 +172,7 @@ const FlightStats: React.FC = () => {
           pagination={false}
           bordered
           size="middle"
+                            scroll={{ x: 800}} 
         />
       </div>
 
@@ -188,6 +189,7 @@ const FlightStats: React.FC = () => {
           pagination={false}
           bordered
           size="middle"
+                  scroll={{ x: 800}} 
         />
       </div>
     </div>
