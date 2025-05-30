@@ -21,8 +21,8 @@ const Signup = () => {
     watch,
   } = useForm<FormData>();
 
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -30,20 +30,21 @@ const Signup = () => {
 
   return (
     <section
-      className="bg-cover bg-center bg-no-repeat w-full pt-[151px] pb-20"
+      className="bg-cover bg-center bg-no-repeat w-full lg:pt-[220px] pt-32 lg:pb-20 pb-10 px-4 sm:px-8"
       style={{ backgroundImage: `url(${Authbg})` }}
     >
-      <div className="w-[900px] bg-white mx-auto px-[94px] py-10 rounded-[18px] backdrop-blur-[16px] h-fit">
-        <h2 className="text-[40px] text-center font-sans text-[#222] font-bold">
+      <div className="bg-white max-w-5xl w-full mx-auto px-6 sm:px-10 md:px-16 py-10 rounded-2xl backdrop-blur-lg">
+        <h2 className="text-3xl sm:text-4xl text-center font-sans text-[#222] font-bold">
           Sign up
         </h2>
-        <p className="text-[18px] font-sans text-[#5A5C5F] pt-4 text-center">
+        <p className="text-base sm:text-lg font-sans text-[#5A5C5F] pt-4 text-center">
           Let's have these fields
         </p>
+
         <form onSubmit={handleSubmit(onSubmit)} className="py-9">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+              <h3 className="text-base sm:text-lg font-medium text-[#222] pb-2">
                 First name
               </h3>
               <input
@@ -51,7 +52,7 @@ const Signup = () => {
                   required: "First name is required",
                 })}
                 placeholder="Charli"
-                className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#5A5C5F] text-[16px] w-full"
+                className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
               {errors.firstName && (
                 <p className="text-red-500 text-sm mt-1">
@@ -59,14 +60,17 @@ const Signup = () => {
                 </p>
               )}
             </div>
+
             <div>
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+              <h3 className="text-base sm:text-lg font-medium text-[#222] pb-2">
                 Last name
               </h3>
               <input
-                {...register("lastName", { required: "Last name is required" })}
+                {...register("lastName", {
+                  required: "Last name is required",
+                })}
                 placeholder="Curs"
-                className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#5A5C5F] text-[16px] w-full"
+                className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
               {errors.lastName && (
                 <p className="text-red-500 text-sm mt-1">
@@ -74,8 +78,9 @@ const Signup = () => {
                 </p>
               )}
             </div>
-            <div className="col-span-2">
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+
+            <div className="md:col-span-2">
+              <h3 className="text-base sm:text-lg font-medium text-[#222] pb-2">
                 Email Address
               </h3>
               <input
@@ -87,7 +92,7 @@ const Signup = () => {
                   },
                 })}
                 placeholder="charlicurs@gmail.com"
-                className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#5A5C5F] text-[16px] w-full"
+                className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">
@@ -95,8 +100,9 @@ const Signup = () => {
                 </p>
               )}
             </div>
+
             <div className="relative">
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+              <h3 className="text-base sm:text-lg font-medium text-[#222] pb-2">
                 Password
               </h3>
               <input
@@ -106,10 +112,10 @@ const Signup = () => {
                   minLength: { value: 6, message: "Minimum 6 characters" },
                 })}
                 placeholder="********"
-                className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#5A5C5F] text-[16px] w-full"
+                className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
               <div
-                className="absolute right-4 top-[57px] cursor-pointer text-gray-500"
+                className="absolute right-4 md:top-[52px] top-12 cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -124,8 +130,9 @@ const Signup = () => {
                 </p>
               )}
             </div>
+
             <div className="relative">
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+              <h3 className="text-base sm:text-lg font-medium text-[#222] pb-2">
                 Confirm Password
               </h3>
               <input
@@ -136,10 +143,10 @@ const Signup = () => {
                     value === watch("password") || "Passwords do not match",
                 })}
                 placeholder="********"
-                className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#5A5C5F] text-[16px] w-full"
+                className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
               <div
-                className="absolute right-4 top-[57px] cursor-pointer text-gray-500"
+                className="absolute right-4 md:top-[52px] top-12 cursor-pointer text-gray-500"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (
@@ -156,34 +163,37 @@ const Signup = () => {
             </div>
           </div>
 
-          <div className="flex gap-x-3 py-6">
+          <div className="flex items-start gap-3 pt-6">
             <input
               type="checkbox"
               {...register("terms", { required: true })}
-              className="w-6 h-6 rounded-[8px] appearance-none border border-black checked:bg-black cursor-pointer"
+              className="w-5 h-5 mt-1 rounded border border-black checked:bg-black cursor-pointer"
             />
-            <p className="text-[16px] text-[#494949]">
+            <p className="text-sm sm:text-base text-[#494949]">
               I hereby confirm and accept the{" "}
-              <span className="text-[#13A6EF]">Terms and Conditions </span>
-              and <span className="text-[#13A6EF]">Privacy Policy.</span> I
-              confirm that I am over 18 years of age.
+              <span className="text-[#13A6EF]">Terms and Conditions</span> and{" "}
+              <span className="text-[#13A6EF]">Privacy Policy.</span> I confirm
+              that I am over 18 years of age.
             </p>
           </div>
           {errors.terms && (
-            <p className="text-red-500 text-sm -mt-4 mb-4">
+            <p className="text-red-500 text-sm mt-2">
               You must accept the terms
             </p>
           )}
 
           <button
             type="submit"
-            className="bg-[#13A6EF] px-[100px] py-[18px] text-white font-bold text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            className="bg-[#13A6EF] hover:bg-white hover:text-black transition-all duration-300 border border-[#13A6EF] text-white text-lg font-bold py-4 w-full rounded-md mt-8 cursor-pointer"
           >
             Registration
           </button>
 
-          <h4 className="text-[18px] text-[#5A5C5F] font-medium text-center mt-5">
-            Already have an account? <Link to="/sign-in" className="text-[#222]">Log In</Link>
+          <h4 className="text-center text-[#5A5C5F] text-base font-medium mt-5">
+            Already have an account?{" "}
+            <Link to="/sign-in" className="text-[#222]">
+              Log In
+            </Link>
           </h4>
         </form>
       </div>

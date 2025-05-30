@@ -14,17 +14,20 @@ const Verification = () => {
   } = useForm();
 
   useEffect(() => {
-    if (timer === 0) {
-      setResendAvailable(true);
-      return;
+    if (!resendAvailable && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setResendAvailable(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
     }
-
-    const interval = setInterval(() => {
-      setTimer(prev => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timer]);
+  }, [resendAvailable, timer]);
 
   const onSubmit = () => {
     if (otp.length !== 6) {
@@ -39,21 +42,23 @@ const Verification = () => {
     if (!resendAvailable) return;
 
     console.log("Resending OTP...");
+
+    setOtp("");
     setTimer(25);
     setResendAvailable(false);
   };
 
   return (
     <section
-      className="bg-cover bg-center bg-no-repeat w-full pt-[220px] pb-20 h-screen"
+      className="bg-cover bg-center bg-no-repeat w-full lg:pt-[220px] pt-32 lg:pb-20 pb-10 min-h-screen px-4"
       style={{ backgroundImage: `url(${Authbg})` }}
     >
-      <div className="w-[900px] bg-white mx-auto px-[94px] py-10 rounded-[18px] backdrop-blur-[16px] h-fit">
-        <h2 className="text-[40px] text-center font-sans text-[#222] font-bold">
+      <div className="w-full max-w-[900px] bg-white mx-auto px-6 md:px-[94px] py-10 rounded-[18px] backdrop-blur-[16px]">
+        <h2 className="text-[32px] md:text-[40px] text-center font-sans text-[#222] font-bold">
           Verification Code
         </h2>
-        <h4 className="text-[18px] text-[#5A5C5F] font-normal text-center mt-5 px-18">
-          Enter the Verification code sent to your email address:{" "}
+        <h4 className="text-[16px] md:text-[18px] text-[#5A5C5F] font-normal text-center mt-5 md:px-18">
+          Enter verification code sent to your email address abcdef@gmail.com
           <span className="font-semibold text-black">abcdfgf@gmail.com</span>
         </h4>
 
@@ -67,11 +72,11 @@ const Verification = () => {
                 numInputs={6}
                 inputType="tel"
                 shouldAutoFocus
-                renderSeparator={<span className="mx-5">-</span>}
+                renderSeparator={<span className="mx-1 md:mx-5">-</span>}
                 renderInput={props => (
                   <input
                     {...props}
-                    className="!w-20 !h-20  text-center text-xl font-bold border border-[#CFCFCF] rounded-md focus:outline-none focus:ring-2 focus:ring-[#13A6EF] transition-all duration-200"
+                    className="!w-8 !h-8 md:!w-20 md:!h-20 text-center text-xl font-bold border border-[#CFCFCF] rounded-md focus:outline-none focus:ring-2 focus:ring-[#13A6EF] transition-all duration-200"
                   />
                 )}
               />
@@ -80,7 +85,7 @@ const Verification = () => {
 
           <button
             type="submit"
-            className="bg-[#13A6EF] px-[100px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            className="bg-[#13A6EF] lg:px-[100px] px-[40px] lg:py-[18px] py-[15px] mt-10 text-white font-bold font-sans lg:text-[18px] text-[16px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
           >
             Confirm Code
           </button>
@@ -99,7 +104,7 @@ const Verification = () => {
             >
               Resend
             </button>{" "}
-            {resendAvailable ? null : `in ${timer}s`}
+            {!resendAvailable && `in ${timer}s`}
           </p>
         </form>
       </div>
