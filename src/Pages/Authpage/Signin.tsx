@@ -25,14 +25,14 @@ const Signin = () => {
 
   return (
     <section
-      className="bg-cover bg-center bg-no-repeat w-full pt-[181px] pb-20 h-screen"
+      className="bg-cover bg-center bg-no-repeat w-full min-h-screen lg:pt-[220px] pt-32 lg:pb-20 pb-10 px-4 sm:px-6"
       style={{ backgroundImage: `url(${Authbg})` }}
     >
-      <div className="w-[900px] bg-white mx-auto px-[94px] py-10 rounded-[18px] backdrop-blur-[16px] h-fit">
-        <h2 className="text-[40px] text-center font-sans text-[#222] font-bold">
+      <div className="max-w-[900px] w-full bg-white mx-auto px-6 sm:px-10 md:px-[60px] lg:px-[94px] py-10 rounded-[18px] backdrop-blur-[16px]">
+        <h2 className="text-3xl sm:text-[40px] text-center font-sans text-[#222] font-bold">
           Log In
         </h2>
-        <h4 className="text-[18px] text-[#5A5C5F] font-medium text-center mt-5">
+        <h4 className="text-base sm:text-[18px] text-[#5A5C5F] font-medium text-center mt-4">
           Don’t have an account?{" "}
           <Link to="/sign-up" className="text-[#222] font-bold">
             Sign up
@@ -92,25 +92,28 @@ const Signin = () => {
             )}
           </div>
 
-          <div className="flex justify-between pt-5">
-            <div className="flex gap-x-3">
+          <div className="flex flex-col sm:flex-row justify-between gap-4 pt-5">
+            <div className="flex items-center gap-x-3">
               <input
                 type="checkbox"
                 {...register("terms", { required: true })}
-                className="w-6 h-6 rounded-[8px] appearance-none border border-black checked:bg-black cursor-pointer"
+                className="w-5 h-5 rounded-[8px] appearance-none border border-black checked:bg-black cursor-pointer"
               />
               <p className="text-[16px] text-[#494949] font-sans">
                 Remember me
               </p>
             </div>
-            <Link to="/forgot-password" className="text-[16px] text-[#494949] font-sans">
-              Forgot password ?
+            <Link
+              to="/forgot-password"
+              className="text-[16px] text-[#494949] font-sans"
+            >
+              Forgot password?
             </Link>
           </div>
 
           <button
             type="submit"
-            className="bg-[#13A6EF] px-[100px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            className="bg-[#13A6EF] py-[16px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
           >
             Log In
           </button>

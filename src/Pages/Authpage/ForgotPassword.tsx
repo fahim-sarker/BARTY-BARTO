@@ -19,14 +19,14 @@ const ForgotPassword = () => {
 
   return (
     <section
-      className="bg-cover bg-center bg-no-repeat w-full pt-[220px] pb-20 h-screen"
+      className="bg-cover bg-center bg-no-repeat w-full lg:pt-[220px] pt-32 lg:pb-20 pb-10 min-h-screen px-4"
       style={{ backgroundImage: `url(${Authbg})` }}
     >
-      <div className="w-[900px] bg-white mx-auto px-[94px] py-10 rounded-[18px] backdrop-blur-[16px] h-fit">
-        <h2 className="text-[40px] text-center font-sans text-[#222] font-bold">
+      <div className="w-full max-w-[900px] bg-white mx-auto px-6 md:px-[94px] py-10 rounded-[18px] backdrop-blur-[16px]">
+        <h2 className="text-[32px] md:text-[40px] text-center font-sans text-[#222] font-bold">
           Forgot Password
         </h2>
-        <h4 className="text-[18px] text-[#5A5C5F] font-normal text-center mt-5 px-28">
+        <h4 className="text-[16px] md:text-[18px] text-[#5A5C5F] font-normal text-center mt-5 md:px-28">
           Please provide your registered email address to receive a password
           reset code.
         </h4>
@@ -53,10 +53,11 @@ const ForgotPassword = () => {
               </p>
             )}
           </div>
+
           <Link to="/account-confirmation">
             <button
               type="submit"
-              className="bg-[#13A6EF] px-[100px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+              className="bg-[#13A6EF] md:px-[100px] px-[50px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
             >
               Send Code
             </button>

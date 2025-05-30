@@ -127,6 +127,12 @@
 
 .react-tabs__tab--selected {
   border-bottom: 2px solid red !important;
+  background-color: transparent !important;
+}
+.tabs-section-two .react-tabs__tab--selected {
+  border-bottom: 2px solid #13a6ef !important;
+  background-color: transparent !important;
+  color: #13a6ef !important;
 }
 
 .fc-today-button {
@@ -171,4 +177,22 @@
 .fc-daygrid-day-frame {
   padding: 30px 12px;
 }
+.fc-daygrid-day-frame {
+  cursor: pointer !important;
+}
 
+.fc-direction-ltr .fc-button-group > .fc-button:not(:last-child) {
+  color: black !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+.fc-direction-ltr .fc-button-group .fc-button:not(:last-child) {
+  color: black !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+.fc-direction-ltr .fc-button-group > .fc-button:not(:first-child) {
+  color: black !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}

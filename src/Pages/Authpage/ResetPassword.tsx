@@ -17,7 +17,8 @@ const ResetPassword = () => {
   } = useForm<FormData>();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   const onSubmit = (data: FormData) => {
     console.log(data);
@@ -25,20 +26,20 @@ const ResetPassword = () => {
 
   return (
     <section
-      className="bg-cover bg-center bg-no-repeat w-full pt-[220px] pb-20 h-screen"
+      className="bg-cover bg-center bg-no-repeat w-full min-h-screen flex items-center justify-center px-4  pt-32  pb-10"
       style={{ backgroundImage: `url(${Authbg})` }}
     >
-      <div className="w-[900px] bg-white mx-auto px-[94px] py-10 rounded-[18px] backdrop-blur-[16px] h-fit">
-        <h2 className="text-[40px] text-center font-sans text-[#222] font-bold">
+      <div className="w-full max-w-[900px] bg-white px-6 sm:px-10 md:px-[94px] py-10 rounded-[18px] backdrop-blur-[16px]">
+        <h2 className="text-3xl sm:text-[40px] text-center font-sans text-[#222] font-bold">
           Reset Your Password
         </h2>
-        <p className="text-[18px] font-sans text-[#5A5C5F] pt-4 text-center px-40">
+        <p className="text-base sm:text-[18px] font-sans text-[#5A5C5F] pt-4 text-center px-0 sm:px-10 md:px-40">
           Enter a new password to continue using your account.
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="py-9">
           <div className="grid gap-6">
             <div className="relative col-span-2">
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+              <h3 className="text-[16px] sm:text-[18px] font-medium text-[#222] pb-4">
                 Enter New Password
               </h3>
               <input
@@ -67,7 +68,7 @@ const ResetPassword = () => {
               )}
             </div>
             <div className="relative col-span-2">
-              <h3 className="text-[18px] font-medium text-[#222] pb-4">
+              <h3 className="text-[16px] sm:text-[18px] font-medium text-[#222] pb-4">
                 Enter Confirm Password
               </h3>
               <input
@@ -100,9 +101,9 @@ const ResetPassword = () => {
 
           <button
             type="submit"
-            className="bg-[#13A6EF] px-[100px] mt-10 py-[18px] text-white font-bold text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            className="bg-[#13A6EF] mt-10 py-[18px] text-white font-bold text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
           >
-            Rest Password
+            Reset Password
           </button>
         </form>
       </div>

@@ -4,13 +4,13 @@ import Topbar from "../Components/Shared/Topbar";
 
 const DashboardLayout = () => {
   return (
-    <div className="bg-[#F9FAFB]">
+    <div className="bg-[#F9FAFB] h-full">
       <Topbar />
       <div className="flex">
         <Sidebar />
-        <main className="ml-[362px] mt-[140px] w-full pr-10">
+        <div className="xl:ml-[330px] mt-[140px] px-5 w-full">
           <Outlet />
-        </main>
+        </div>
       </div>
     </div>
   );
