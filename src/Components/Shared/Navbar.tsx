@@ -25,7 +25,6 @@ const Navbar = () => {
     };
   }, [menuOpen]);
 
-
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
@@ -34,34 +33,30 @@ const Navbar = () => {
     <nav className="bg-[#F9FAFB] py-4 sm:py-6 fixed w-full top-0 z-50 2xl:px-0 px-5">
       <Container>
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <figure className="shrink-0">
-            <img src={Logo} alt="Logo" className="w-full" />
-          </figure>
-
-          {/* Mobile Menu Toggle */}
+          <Link to="/">
+            <figure className="shrink-0">
+              <img src={Logo} alt="Logo" className="w-full" />
+            </figure>
+          </Link>
           <button
             onClick={() => setMenuOpen(prev => !prev)}
             className="md:hidden text-2xl text-[#13A6EF] focus:outline-none z-50 cursor-pointer"
           >
             {menuOpen ? <FiX /> : <FiMenu />}
           </button>
-
-          {/* Desktop Buttons */}
           <div className="hidden md:flex gap-x-6">
             <Link to="/sign-in">
               <button className="px-[38px] py-3 hover:bg-[#13A6EF] hover:text-white duration-300 ease-in-out rounded-[3px] border border-[#13A6EF] font-sans text-[15px] font-bold cursor-pointer">
                 Login
               </button>
             </Link>
-            <Link to="/sign-up">
+            <Link to="/">
               <button className="px-[38px] py-3 rounded-[3px] bg-[#13A6EF] border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out font-sans text-[15px] font-bold cursor-pointer text-white">
                 Sign Up
               </button>
             </Link>
           </div>
 
-          {/* Mobile Sidebar */}
           <div
             ref={menuRef}
             className={`fixed top-0 left-0 h-full w-3/4 sm:w-2/5 bg-[#000] p-6 pt-24 shadow-lg transition-transform duration-700 z-40 ${
