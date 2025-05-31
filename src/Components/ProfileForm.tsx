@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { FiEdit2 } from "react-icons/fi";
 import Avatar1 from "../../public/Avatar1.png";
 import CountrySelect from "./Reusable/CountrySelect";
@@ -41,13 +40,14 @@ const ProfileForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex gap-x-10">
-        <div className="relative h-[200px] w-[200px] shrink-0">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Avatar */}
+        <div className="relative w-full max-w-[200px] self-center lg:self-start">
           <img
             src={avatar}
             alt="Avatar"
-            className="h-full w-full rounded-full object-cover cursor-pointer"
+            className="w-full h-[200px] rounded-full object-cover cursor-pointer"
             onClick={() => fileRef.current?.click()}
           />
           <div
@@ -64,16 +64,16 @@ const ProfileForm = () => {
             className="hidden"
           />
         </div>
-
-        <div className="grid grid-cols-2 gap-8 w-full">
+        {/* Form fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           <div>
-            <h3 className="text-[18px] font-medium text-[#222] pb-4">
-              Fast name
+            <h3 className="text-[18px] font-medium text-[#222] pb-2">
+              First name
             </h3>
             <input
               {...register("firstName", { required: "First name is required" })}
               placeholder="Charli"
-              className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#3F3F3F] text-[16px] w-full"
+              className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.firstName && (
               <p className="text-red-600 text-sm mt-1">
@@ -83,13 +83,13 @@ const ProfileForm = () => {
           </div>
 
           <div>
-            <h3 className="text-[18px] font-medium text-[#222] pb-4">
+            <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Last name
             </h3>
             <input
               {...register("lastName", { required: "Last name is required" })}
               placeholder="Curs"
-              className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#3F3F3F] text-[16px] w-full"
+              className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.lastName && (
               <p className="text-red-600 text-sm mt-1">
@@ -99,7 +99,7 @@ const ProfileForm = () => {
           </div>
 
           <div>
-            <h3 className="text-[18px] font-medium text-[#222] pb-4">
+            <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Email Address
             </h3>
             <input
@@ -111,7 +111,7 @@ const ProfileForm = () => {
                 },
               })}
               placeholder="charlicurs@gmai.com"
-              className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#3F3F3F] text-[16px] w-full"
+              className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.email && (
               <p className="text-red-600 text-sm mt-1">
@@ -121,34 +121,34 @@ const ProfileForm = () => {
           </div>
 
           <div>
-            <h3 className="text-[18px] font-medium text-[#222] pb-4">
+            <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Phone number
             </h3>
             <div className="relative w-full">
-              <div className="absolute top-[20%] left-0 flex items-center pl-3">
+              <div className="absolute top-[50%] -translate-y-1/2 left-4">
                 <CountrySelect
                   value={country}
                   onChange={setCountry}
                   name="country"
-                  className="appearance-none bg-transparent border-none outline-none h-full mr-10"
+                  className="bg-transparent border-none outline-none pr-4"
                 />
               </div>
               <input
                 {...register("phone", { required: "Phone number is required" })}
                 type="tel"
                 placeholder="+ 554 564 1564"
-                className="w-full border border-[#CFCFCF] rounded-[8px] py-[11px] pl-[60px] pr-6 text-[#3F3F3F] text-[16px] placeholder:ml-1"
+                className="w-full border border-[#CFCFCF] rounded-[8px] py-3 pl-[100px] pr-6 text-[#3F3F3F] text-[16px]"
               />
-              {errors.phone && (
-                <p className="text-red-600 text-sm mt-1">
-                  {errors.phone.message}
-                </p>
-              )}
             </div>
+            {errors.phone && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.phone.message}
+              </p>
+            )}
           </div>
 
           <div>
-            <h3 className="text-[18px] font-medium text-[#222] pb-4">
+            <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Business name
             </h3>
             <input
@@ -156,7 +156,7 @@ const ProfileForm = () => {
                 required: "Business name is required",
               })}
               placeholder="Business name here...."
-              className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#3F3F3F] text-[16px] w-full"
+              className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.businessName && (
               <p className="text-red-600 text-sm mt-1">
@@ -166,15 +166,15 @@ const ProfileForm = () => {
           </div>
 
           <div>
-            <h3 className="text-[18px] font-medium text-[#222] pb-4">
+            <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Business Address
             </h3>
             <input
               {...register("businessAddress", {
                 required: "Business address is required",
               })}
-              placeholder="fill this"
-              className="border border-[#CFCFCF] rounded-[8px] py-[11px] px-6 text-[#3F3F3F] text-[16px] w-full"
+              placeholder="Fill this"
+              className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.businessAddress && (
               <p className="text-red-600 text-sm mt-1">
