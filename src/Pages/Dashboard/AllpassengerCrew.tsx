@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Divider, Table, Button, Dropdown, Menu } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import { DownOutlined, EllipsisOutlined } from "@ant-design/icons"; // Importing ellipsis icon
@@ -15,7 +15,9 @@ interface DataType {
 const columns: TableColumnsType<DataType> = [
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Full Name</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
+        Full Name
+      </span>
     ), // Customize font size for Full Name
     dataIndex: "name",
     render: (text: string) => (
@@ -26,7 +28,9 @@ const columns: TableColumnsType<DataType> = [
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Passport Number</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
+        Passport Number
+      </span>
     ), // Customize font size for Passport Number
     dataIndex: "passportNumber",
     render: (text: string) => (
@@ -37,7 +41,9 @@ const columns: TableColumnsType<DataType> = [
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Nationality</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
+        Nationality
+      </span>
     ), // Customize font size for Nationality
     dataIndex: "nationality",
     render: (text: string) => (
@@ -48,7 +54,9 @@ const columns: TableColumnsType<DataType> = [
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Date Of Birth</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
+        Date Of Birth
+      </span>
     ), // Customize font size for Date Of Birth
     dataIndex: "dateOfBirth",
     render: (text: string) => (
@@ -59,7 +67,9 @@ const columns: TableColumnsType<DataType> = [
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)] lg:text-[16px] font-[400] leading-normal">Action</span>
+      <span className="text-[var(--PM-Text-Color)] lg:text-[16px] font-[400] leading-normal">
+        Action
+      </span>
     ), // Customize font size for Action
     dataIndex: "action",
     render: () => (
@@ -168,6 +178,33 @@ const AllPassengerCrew: React.FC = () => {
   const togglePassengerDropdown = () =>
     setShowPassengerDropdown(!showPassengerDropdown);
 
+  const crewRef = useRef<HTMLDivElement>(null);
+  const passengerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        crewRef.current &&
+        !crewRef.current.contains(event.target as Node) &&
+        showCrewDropdown
+      ) {
+        setShowCrewDropdown(false);
+      }
+      if (
+        passengerRef.current &&
+        !passengerRef.current.contains(event.target as Node) &&
+        showPassengerDropdown
+      ) {
+        setShowPassengerDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCrewDropdown, showPassengerDropdown]);
+
   return (
     <div>
       <div className="table-container" style={{ marginBottom: "20px" }}>
@@ -206,7 +243,10 @@ const AllPassengerCrew: React.FC = () => {
 
             {/* Crew Dropdown */}
             {showCrewDropdown && (
-              <div className="absolute -mt-5 w-full p-4 border rounded-lg shadow-md bg-white top-full left-0 z-50">
+              <div
+                ref={crewRef}
+                className="absolute mt-3 lg:-mt-5 w-full p-4 border rounded-lg shadow-md bg-white top-full left-0 z-50"
+              >
                 <h3 className="text-lg font-semibold mb-4">
                   Upload Passenger Passport
                 </h3>
@@ -231,7 +271,10 @@ const AllPassengerCrew: React.FC = () => {
 
             {/* Passenger Dropdown */}
             {showPassengerDropdown && (
-              <div className="absolute -mt-5 w-full p-4 border rounded-lg shadow-md bg-white top-full left-0 z-50">
+              <div
+                ref={passengerRef}
+                className="absolute mt-3 lg:-mt-5 w-full p-4 border rounded-lg shadow-md bg-white top-full left-0 z-50"
+              >
                 <h3 className="text-lg font-semibold mb-4">
                   Upload Passenger Passport
                 </h3>
@@ -264,7 +307,7 @@ const AllPassengerCrew: React.FC = () => {
         pagination={false}
         bordered
         size="middle"
-        scroll={{ x: 1020}} // Horizontal scroll for larger tables on smaller screens
+        scroll={{ x: 1020 }} // Horizontal scroll for larger tables on smaller screens
       />
     </div>
   );

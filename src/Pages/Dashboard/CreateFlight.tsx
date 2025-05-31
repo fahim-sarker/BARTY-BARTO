@@ -172,7 +172,7 @@ const CreateFlight = () => {
                 eventContent={arg => (
                   <div className="flex items-center gap-1 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                     <span className="text-green-500">●</span>
-                    <span>{arg.event.title}</span>
+                    <span className="text-black">{arg.event.title}</span>
                   </div>
                 )}
                 height="auto"
@@ -278,15 +278,15 @@ const CreateFlight = () => {
         )}
 
         {isEditMode ? (
-          <div className="flex gap-4">
+          <div className="md:flex gap-4">
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-1/2"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm md:w-1/2 w-full"
               onClick={handleUpload}
             >
               Edit Declaration
             </button>
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-1/2"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm md:w-1/2 w-full md:mt-0 mt-3"
               onClick={handleDownload}
             >
               Download
@@ -294,7 +294,7 @@ const CreateFlight = () => {
           </div>
         ) : (
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-full"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-full md:mt-0 mt-3"
             onClick={handleUpload}
           >
             Generate Declaration

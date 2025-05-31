@@ -60,7 +60,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Mobile Toggle Button */}
-      <div className="xl:hidden fixed top-8 right-5 z-50">
+      <div className="xl:hidden fixed top-5 right-5 z-50">
         <button
           onClick={() => setOpen(!open)}
           className="text-white bg-[#13A6EF] p-2 rounded-md cursor-pointer"
@@ -82,7 +82,6 @@ const Sidebar = () => {
           {/* <figure className="flex justify-center xl:hidden mb-8 px-5">
             <IoAirplaneSharp className="size-20 text-white"/>
           </figure> */}
-
           {navItems.map(item => (
             <li key={item.path}>
               <NavLink
@@ -108,6 +107,7 @@ const Sidebar = () => {
           <Logout />
           Logout
         </button>
+        
       </section>
     </>
   );
