@@ -6,7 +6,7 @@ import {
   Settings,
   Signature,
 } from "./Icons/Svg";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 // import { IoAirplaneSharp } from "react-icons/io5";
@@ -99,15 +99,15 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-
-        <button
-          onClick={handleLogout}
-          className="text-white hover:bg-[#13A6EF] flex items-center gap-x-3 cursor-pointer text-[20px] font-medium px-9 py-5 rounded-lg transition-colors duration-300"
-        >
-          <Logout />
-          Logout
-        </button>
-        
+        <Link to="/">
+          <button
+            onClick={handleLogout}
+            className="text-white hover:bg-[#13A6EF] flex items-center gap-x-3 cursor-pointer text-[20px] font-medium px-9 py-5 rounded-lg transition-colors duration-300"
+          >
+            <Logout />
+            Logout
+          </button>
+        </Link>
       </section>
     </>
   );

@@ -34,7 +34,7 @@ const Signin = () => {
         </h2>
         <h4 className="text-base sm:text-[18px] text-[#5A5C5F] font-medium text-center mt-4">
           Don’t have an account?{" "}
-          <Link to="/sign-up" className="text-[#222] font-bold">
+          <Link to="/" className="text-[#222] font-bold">
             Sign up
           </Link>
         </h4>
