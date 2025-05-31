@@ -181,13 +181,14 @@ const Signup = () => {
               You must accept the terms
             </p>
           )}
-
-          <button
-            type="submit"
-            className="bg-[#13A6EF] hover:bg-white hover:text-black transition-all duration-300 border border-[#13A6EF] text-white text-lg font-bold py-4 w-full rounded-md mt-8 cursor-pointer"
-          >
-            Registration
-          </button>
+          <Link to='/sign-in'>
+            <button
+              type="submit"
+              className="bg-[#13A6EF] hover:bg-white hover:text-black transition-all duration-300 border border-[#13A6EF] text-white text-lg font-bold py-4 w-full rounded-md mt-8 cursor-pointer"
+            >
+              Registration
+            </button>
+          </Link>
 
           <h4 className="text-center text-[#5A5C5F] text-base font-medium mt-5">
             Already have an account?{" "}

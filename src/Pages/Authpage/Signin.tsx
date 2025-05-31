@@ -110,13 +110,14 @@ const Signin = () => {
               Forgot password?
             </Link>
           </div>
-
-          <button
-            type="submit"
-            className="bg-[#13A6EF] py-[16px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
-          >
-            Log In
-          </button>
+          <Link to="/flight-stats">
+            <button
+              type="submit"
+              className="bg-[#13A6EF] py-[16px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            >
+              Log In
+            </button>
+          </Link>
         </form>
       </div>
     </section>
