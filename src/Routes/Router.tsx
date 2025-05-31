@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
     element: <RootLayout/>,
     errorElement: "",
     children: [
-      { path: "/sign-up", element: <Signup /> },
+      { path: "", element: <Signup /> },
       { path: "/sign-in", element: <Signin /> },
       { path: "/forgot-password", element: <ForgotPassword /> },
       { path: "/account-confirmation", element: <AccountConfiramtion /> },
