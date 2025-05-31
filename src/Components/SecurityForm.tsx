@@ -40,13 +40,14 @@ const Securityform = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex gap-x-10">
-        <div className="relative h-[200px] w-[200px] shrink-0">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <div className="flex flex-col lg:flex-row gap-y-10 gap-x-10">
+        {/* Avatar Section */}
+        <div className="relative w-full max-w-[200px] self-center lg:self-start">
           <img
             src={avatar}
             alt="Avatar"
-            className="h-full w-full rounded-full object-cover cursor-pointer"
+            className="w-full h-[200px] rounded-full object-cover cursor-pointer"
             onClick={() => fileRef.current?.click()}
           />
           <div
@@ -64,9 +65,10 @@ const Securityform = () => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-8 w-full">
+        {/* Password Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           {/* Current Password */}
-          <div className="relative col-span-2">
+          <div className="relative col-span-full">
             <h3 className="text-[18px] font-medium text-[#222] pb-4">
               Current Password
             </h3>

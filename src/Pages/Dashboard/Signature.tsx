@@ -4,12 +4,12 @@ const Signature = () => {
   const [file, setFile] = useState<File | null>(null);
 
   return (
-    <section className="">
-      <h3 className="font-sans text-[30px] font-medium text-[#222]">
+    <section className="px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6">
+      <h3 className="font-sans text-[22px] sm:text-[26px] md:text-[30px] font-medium text-[#222]">
         Authorized Agent or Pilot-in Command Signature
       </h3>
 
-      <p className="text-[20px] text-[#9CA3AF] pt-5 pb-10 font-sans font-normal">
+      <p className="text-[16px] sm:text-[18px] md:text-[20px] text-[#9CA3AF] pt-4 pb-8 font-sans font-normal">
         I declare that all statements and particulars contained in this General
         Declaration and in any supplementary forms required to be presented with
         this General Declaration are complete and true to the best of my
@@ -17,11 +17,11 @@ const Signature = () => {
         on the flight
       </p>
 
-      <h4 className="text-[24px] text-[#222] font-sans font-medium">
+      <h4 className="text-[20px] sm:text-[22px] md:text-[24px] text-[#222] font-sans font-medium">
         Upload Signature
       </h4>
 
-      <div className="bg-[#FFF] p-10 rounded-[20px] my-8">
+      <div className="bg-white p-6 sm:p-8 md:p-10 rounded-[20px] my-6 sm:my-8">
         <input
           id="fileUpload"
           type="file"
@@ -31,7 +31,7 @@ const Signature = () => {
         />
 
         <div
-          className="h-[390px] border-2 border-dashed border-gray-300 w-full rounded-[10px] flex items-center justify-center cursor-pointer"
+          className="h-[280px] sm:h-[320px] md:h-[390px] border-2 border-dashed border-gray-300 w-full rounded-[10px] flex items-center justify-center cursor-pointer"
           onClick={() => document.getElementById("fileUpload")?.click()}
         >
           <div className="flex flex-col items-center justify-center gap-3 px-4 text-center">
@@ -53,8 +53,8 @@ const Signature = () => {
               <>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="72"
-                  height="72"
+                  width="56"
+                  height="56"
                   viewBox="0 0 72 72"
                   fill="none"
                 >
@@ -86,8 +86,9 @@ const Signature = () => {
           </div>
         </div>
       </div>
-      <div className="flex justify-end mb-8">
-        <button className="bg-blue-500 hover:bg-blue-600 font-sans text-white px-8 py-3 rounded-[10px] text-sm w-fit cursor-pointer">
+
+      <div className="flex justify-end mb-6 sm:mb-8">
+        <button className="bg-blue-500 hover:bg-blue-600 font-sans text-white px-6 sm:px-8 py-3 rounded-[10px] text-sm">
           Save Signature
         </button>
       </div>

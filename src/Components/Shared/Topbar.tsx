@@ -3,7 +3,7 @@ import Avatar from "/avatar.png";
 
 const Topbar = () => {
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-[#F9FAFB] py-6 lg:px-[60px] px-8 xl:z-50 shadow">
+    <nav className="fixed top-0 left-0 right-0 bg-[#F9FAFB] py-6 lg:px-[60px] px-8 z-50 shadow">
       <div className="flex justify-between items-center">
         <figure className=" xl:flex hidden">
           <img src={Logo} alt="Logo" className="w-fit h-fit" />

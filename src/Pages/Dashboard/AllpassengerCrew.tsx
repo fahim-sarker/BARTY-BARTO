@@ -15,51 +15,51 @@ interface DataType {
 const columns: TableColumnsType<DataType> = [
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[400] leading-normal">Full Name</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Full Name</span>
     ), // Customize font size for Full Name
     dataIndex: "name",
     render: (text: string) => (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[500] leading-normal">
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
         {text}
       </span>
     ),
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[400] leading-normal">Passport Number</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Passport Number</span>
     ), // Customize font size for Passport Number
     dataIndex: "passportNumber",
     render: (text: string) => (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[500] leading-normal">
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
         {text}
       </span>
     ),
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[400] leading-normal">Nationality</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Nationality</span>
     ), // Customize font size for Nationality
     dataIndex: "nationality",
     render: (text: string) => (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[500] leading-normal">
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
         {text}
       </span>
     ),
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[400] leading-normal">Date Of Birth</span>
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">Date Of Birth</span>
     ), // Customize font size for Date Of Birth
     dataIndex: "dateOfBirth",
     render: (text: string) => (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[500] leading-normal">
+      <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
         {text}
       </span>
     ),
   },
   {
     title: (
-      <span className="text-[var(--PM-Text-Color)] text-lg lg:text-[20px] font-[400] leading-normal">Action</span>
+      <span className="text-[var(--PM-Text-Color)] lg:text-[16px] font-[400] leading-normal">Action</span>
     ), // Customize font size for Action
     dataIndex: "action",
     render: () => (
