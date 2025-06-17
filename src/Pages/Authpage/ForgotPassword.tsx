@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import Authbg from "/authbg.jpg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAxios from "../../Hooks/UseAxios";
 import { toast, ToastContainer } from "react-toastify";
 import { useState } from "react";
@@ -32,7 +32,9 @@ const ForgotPassword = () => {
       if (response.data.success) {
         toast.success("OTP sent successfully");
         setTimeout(() => {
-          navigate("/account-confirmation");
+          navigate(
+            `/account-confirmation?email=${encodeURIComponent(data?.email)}`
+          );
         }, 1000);
       } else {
         toast.error("Invalid email address");

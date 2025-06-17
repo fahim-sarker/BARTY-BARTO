@@ -41,7 +41,7 @@ const Verification = () => {
   }, [resendAvailable, timer]);
 
   const onSubmit = async () => {
-    if (otp.length !== 4) {
+    if (otp.length !== 6) {
       toast.error("Please enter the complete 6-digit code.");
       return;
     }
@@ -113,7 +113,7 @@ const Verification = () => {
               <OtpInput
                 value={otp}
                 onChange={setOtp}
-                numInputs={4}
+                numInputs={6}
                 inputType="tel"
                 shouldAutoFocus
                 renderSeparator={<span className="mx-1 md:mx-5">-</span>}
