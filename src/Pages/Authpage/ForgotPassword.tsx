@@ -1,20 +1,47 @@
 import { useForm } from "react-hook-form";
 import Authbg from "/authbg.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAxios from "../../Hooks/UseAxios";
+import { toast, ToastContainer } from "react-toastify";
+import { useState } from "react";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type FormData = {
   email: string;
 };
 
 const ForgotPassword = () => {
+  const Axiosinstance = useAxios();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log("Login data:", data);
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    try {
+      const response = await Axiosinstance.post(
+        "/users/login/email-verify",
+        data
+      );
+
+      if (response.data.success) {
+        toast.success("OTP sent successfully");
+        setTimeout(() => {
+          navigate("/account-confirmation");
+        }, 1000);
+      } else {
+        toast.error("Invalid email address");
+      }
+    } catch (error: any) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,16 +81,19 @@ const ForgotPassword = () => {
             )}
           </div>
 
-          <Link to="/account-confirmation">
-            <button
-              type="submit"
-              className="bg-[#13A6EF] md:px-[100px] px-[50px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
-            >
-              Send Code
-            </button>
-          </Link>
+          <button
+            type="submit"
+            className="bg-[#13A6EF] md:px-[100px] px-[50px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out flex justify-center items-center gap-2"
+          >
+            {loading ? (
+              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+            ) : (
+              "Send Code"
+            )}
+          </button>
         </form>
       </div>
+      <ToastContainer />
     </section>
   );
 };

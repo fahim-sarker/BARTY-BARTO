@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Signup from "../Pages/Authpage/Signup";
-import  RootLayout from "../Layout/RootLayout";
+import RootLayout from "../Layout/RootLayout";
 import Signin from "../Pages/Authpage/Signin";
 import ForgotPassword from "../Pages/Authpage/ForgotPassword";
 import AccountConfiramtion from "../Pages/Authpage/AccountConfiramtion";
@@ -17,7 +17,7 @@ import Settings from "../Pages/Dashboard/Settings";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout/>,
+    element: <RootLayout />,
     errorElement: "",
     children: [
       { path: "", element: <Signup /> },
@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <DashboardLayout/>,
+    element: <DashboardLayout />,
     errorElement: "",
     children: [
       { path: "/dashboard-form", element: <Dashboardform /> },

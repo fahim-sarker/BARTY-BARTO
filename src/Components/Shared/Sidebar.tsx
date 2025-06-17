@@ -102,7 +102,8 @@ const Sidebar = () => {
         <Link to="/">
           <button
             onClick={handleLogout}
-            className="text-white hover:bg-[#13A6EF] flex items-center gap-x-3 cursor-pointer text-[20px] font-medium px-9 py-5 rounded-lg transition-colors duration-300"
+            className="text-white hover:bg-[#13A6EF] flex items-center gap-x-3 cursor-pointer text-[20px]
+             w-full font-medium px-9 py-5 rounded-lg transition-colors duration-300"
           >
             <Logout />
             Logout

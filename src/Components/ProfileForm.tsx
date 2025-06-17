@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiEdit2 } from "react-icons/fi";
 import Avatar1 from "../../public/Avatar1.png";
-import CountrySelect from "./Reusable/CountrySelect";
+import CountrySelect, { type CountryOption } from "./Reusable/CountrySelect";
 
 type FormData = {
   firstName: string;
@@ -15,7 +15,12 @@ type FormData = {
 
 const ProfileForm = () => {
   const [avatar, setAvatar] = useState<string>(Avatar1);
-  const [country, setCountry] = useState<string>("United States");
+  const [country, setCountry] = useState<CountryOption | null>({
+    label: "United States",
+    value: "United States",
+    flag: "https://flagcdn.com/w40/us.png",
+    callingCode: "+1",
+  });
   const fileRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -25,7 +30,12 @@ const ProfileForm = () => {
   } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
-    console.log({ ...data, country, avatar });
+    console.log({
+      ...data,
+      country: country?.value,
+      callingCode: country?.callingCode,
+      avatar,
+    });
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,8 +74,10 @@ const ProfileForm = () => {
             className="hidden"
           />
         </div>
+
         {/* Form fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          {/* First Name */}
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               First name
@@ -82,6 +94,7 @@ const ProfileForm = () => {
             )}
           </div>
 
+          {/* Last Name */}
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Last name
@@ -98,6 +111,7 @@ const ProfileForm = () => {
             )}
           </div>
 
+          {/* Email */}
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Email Address
@@ -120,24 +134,27 @@ const ProfileForm = () => {
             )}
           </div>
 
+          {/* Phone Number */}
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Phone number
             </h3>
             <div className="relative w-full">
-              <div className="absolute top-[50%] -translate-y-1/2 left-4">
+              <div className="absolute top-[50%] -translate-y-1/2 left-4 flex items-center gap-2">
                 <CountrySelect
                   value={country}
                   onChange={setCountry}
                   name="country"
-                  className="bg-transparent border-none outline-none pr-4"
+                  className="bg-transparent border-none outline-none"
                 />
+                <span className="text-[16px] text-[#3F3F3F]">
+                  {country?.callingCode}
+                </span>
               </div>
               <input
                 {...register("phone", { required: "Phone number is required" })}
                 type="tel"
-                placeholder="+ 554 564 1564"
-                className="w-full border border-[#CFCFCF] rounded-[8px] py-3 pl-[100px] pr-6 text-[#3F3F3F] text-[16px]"
+                className="w-full border border-[#CFCFCF] rounded-[8px] py-3 pl-[160px] pr-6 text-[#3F3F3F] text-[16px]"
               />
             </div>
             {errors.phone && (
@@ -147,6 +164,7 @@ const ProfileForm = () => {
             )}
           </div>
 
+          {/* Business Name */}
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Business name
@@ -165,6 +183,7 @@ const ProfileForm = () => {
             )}
           </div>
 
+          {/* Business Address */}
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Business Address

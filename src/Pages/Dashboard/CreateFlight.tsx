@@ -28,7 +28,7 @@ const CreateFlight = () => {
   const today = format(new Date(), "yyyy-MM-dd");
   const navigate = useNavigate();
 
-  // Load saved data from localStorage on mount
+  // Load saved data from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("flightDataMap");
     if (stored) {
@@ -49,7 +49,7 @@ const CreateFlight = () => {
     if (existing) {
       setNote(existing.note);
       setPreview(existing.fileBase64 || null);
-      setFile(null); // clear current file so we don't overwrite preview
+      setFile(null);
     } else {
       setNote("");
       setFile(null);
