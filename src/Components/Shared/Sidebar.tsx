@@ -6,15 +6,19 @@ import {
   Settings,
   Signature,
 } from "./Icons/Svg";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-// import { IoAirplaneSharp } from "react-icons/io5";
+import useAxios from "../../Hooks/UseAxios";
+import { toast, ToastContainer } from "react-toastify";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const location = useLocation();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const Axiosinstance = useAxios();
 
   const navItems = [
     { label: "Dashboard", icon: <Dashboardicon />, path: "/flight-stats" },
@@ -28,16 +32,22 @@ const Sidebar = () => {
     { label: "Settings", icon: <Settings />, path: "/settings" },
   ];
 
-  const handleLogout = () => {
-    console.log("Logged out");
+  const handleLogout = async () => {
+    try {
+      await Axiosinstance.post("/users/logout");
+      localStorage.removeItem("authToken");
+      toast.success("Logged out successfully");
+      navigate("/sign-in");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
+    }
   };
 
-  // Close sidebar on route change
   useEffect(() => {
     setOpen(false);
   }, [location]);
 
-  // Close on outside click (mobile only)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -59,7 +69,6 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile Toggle Button */}
       <div className="xl:hidden fixed top-5 right-5 z-50">
         <button
           onClick={() => setOpen(!open)}
@@ -79,9 +88,6 @@ const Sidebar = () => {
           xl:translate-x-0  xl:flex`}
       >
         <ul className="flex flex-col gap-5">
-          {/* <figure className="flex justify-center xl:hidden mb-8 px-5">
-            <IoAirplaneSharp className="size-20 text-white"/>
-          </figure> */}
           {navItems.map(item => (
             <li key={item.path}>
               <NavLink
@@ -99,17 +105,43 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-        <Link to="/">
-          <button
-            onClick={handleLogout}
-            className="text-white hover:bg-[#13A6EF] flex items-center gap-x-3 cursor-pointer text-[20px]
+
+        {/* Logout Button */}
+        <button
+          onClick={() => setShowLogoutModal(true)}
+          className="text-white hover:bg-[#13A6EF] flex items-center gap-x-3 cursor-pointer text-[20px]
              w-full font-medium px-9 py-5 rounded-lg transition-colors duration-300"
-          >
-            <Logout />
-            Logout
-          </button>
-        </Link>
+        >
+          <Logout />
+          Logout
+        </button>
       </section>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Are you sure you want to log out?
+            </h2>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <ToastContainer />
     </>
   );
 };

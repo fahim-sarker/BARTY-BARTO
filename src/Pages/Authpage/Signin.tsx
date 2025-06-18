@@ -34,8 +34,14 @@ const Signin = () => {
         const token = response.data.data.token;
         localStorage.setItem("authToken", token);
         toast.success("Login successful!");
+
+
+        const redirectPath =
+          localStorage.getItem("redirectPath") || "/flight-stats";
+        localStorage.removeItem("redirectPath");
+
         setTimeout(() => {
-          navigate("/flight-stats"); 
+          navigate(redirectPath);
         }, 1500);
       } else {
         toast.error("Login failed");
@@ -46,6 +52,7 @@ const Signin = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <section

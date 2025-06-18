@@ -1,52 +1,74 @@
 import { useForm } from "react-hook-form";
 import Authbg from "/authbg.jpg";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import OtpInput from "react-otp-input";
+import { useLocation, useNavigate } from "react-router-dom";
+import useAxios from "../../Hooks/UseAxios";
+import { toast, ToastContainer } from "react-toastify";
+import { PiSpinnerBold } from "react-icons/pi";
 
 const AccountConfirmation = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const Axiosinstance = useAxios();
+
   const [otp, setOtp] = useState<string>("");
-  const [timer, setTimer] = useState<number>(25);
-  const [resendAvailable, setResendAvailable] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [resending, setResending] = useState<boolean>(false);
+
+  const email = new URLSearchParams(location.search).get("email") || "";
 
   const {
     handleSubmit,
     formState: {},
   } = useForm();
 
-  useEffect(() => {
-    if (!resendAvailable && timer > 0) {
-      const interval = setInterval(() => {
-        setTimer(prev => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setResendAvailable(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [resendAvailable, timer]);
-
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (otp.length !== 6) {
-      alert("Please enter the complete 6-digit code.");
+      toast.error("Please enter the complete 6-digit code.");
       return;
     }
 
-    console.log("OTP Entered:", otp);
-    // Add API submission logic here
+    setLoading(true);
+    try {
+      const response = await Axiosinstance.post("/users/login/otp-verify", {
+        email,
+        otp,
+      });
+
+      if (response.data.success) {
+        toast.success("OTP verified successfully!");
+        setTimeout(() => {
+          navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Invalid OTP");
+      }
+    } catch (error: any) {
+      toast.error("Verification failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleResend = () => {
-    if (!resendAvailable) return;
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      const response = await Axiosinstance.post("/users/login/email-verify", {
+        email,
+      });
 
-    console.log("Resending OTP...");
-    // Add resend logic (e.g., API call) here
-    setOtp("");
-    setTimer(25);
-    setResendAvailable(false);
+      if (response.data.success) {
+        toast.success("OTP resent successfully!");
+        setOtp(""); 
+      } else {
+        toast.error(response.data.message || "Failed to resend OTP.");
+      }
+    } catch (error: any) {
+      toast.error("Resend failed. Please try again.");
+    } finally {
+      setResending(false);
+    }
   };
 
   return (
@@ -60,7 +82,7 @@ const AccountConfirmation = () => {
         </h2>
         <h4 className="text-[16px] md:text-[18px] text-[#5A5C5F] font-normal text-center mt-5 md:px-18">
           Enter the confirmation code sent to your email address:{" "}
-          <span className="font-semibold text-black">abcdfgf@gmail.com</span>
+          <span className="font-semibold text-black">{email}</span>
         </h4>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col mt-10">
@@ -86,9 +108,13 @@ const AccountConfirmation = () => {
 
           <button
             type="submit"
-            className="bg-[#13A6EF] lg:px-[100px] px-[40px] lg:py-[18px] py-[15px] mt-10 text-white font-bold font-sans lg:text-[18px] text-[16px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            className="bg-[#13A6EF] lg:px-[100px] px-[40px] lg:py-[18px] py-[15px] mt-10 text-white font-bold font-sans lg:text-[18px] text-[16px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out flex items-center justify-center gap-2"
           >
-            Confirm Code
+            {loading ? (
+              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+            ) : (
+              "Confirm Code"
+            )}
           </button>
 
           <p className="text-[#5A5C5F] font-sans font-normal pt-5 text-center">
@@ -96,19 +122,17 @@ const AccountConfirmation = () => {
             <button
               type="button"
               onClick={handleResend}
-              disabled={!resendAvailable}
-              className={`font-bold ${
-                resendAvailable
-                  ? "text-[#222]"
-                  : "text-gray-400 cursor-not-allowed"
+              className={`font-bold cursor-pointer ${
+                resending ? "text-gray-400 cursor-not-allowed" : "text-[#222]"
               }`}
+              disabled={resending}
             >
-              Resend
-            </button>{" "}
-            {!resendAvailable && `in ${timer}s`}
+              {resending ? "Resending..." : "Resend"}
+            </button>
           </p>
         </form>
       </div>
+      <ToastContainer />
     </section>
   );
 };

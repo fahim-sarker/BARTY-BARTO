@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import Authbg from "/authbg.jpg";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -12,8 +12,6 @@ import { PiSpinnerBold } from "react-icons/pi";
 
 const Verification = () => {
   const [otp, setOtp] = useState<string>("");
-  const [timer, setTimer] = useState<number>(25);
-  const [resendAvailable, setResendAvailable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { handleSubmit } = useForm();
@@ -24,21 +22,7 @@ const Verification = () => {
   const email = queryParams.get("email") || "your email";
   const Axiosinstance = useAxios();
 
-  useEffect(() => {
-    if (!resendAvailable && timer > 0) {
-      const interval = setInterval(() => {
-        setTimer(prev => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setResendAvailable(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [resendAvailable, timer]);
+  const resendAvailable = true;
 
   const onSubmit = async () => {
     if (otp.length !== 6) {
@@ -80,8 +64,6 @@ const Verification = () => {
       if (response.data.success) {
         toast.info("Verification code resent to your email.");
         setOtp("");
-        setTimer(25);
-        setResendAvailable(false);
       } else {
         toast.error(response.data.message || "Failed to resend OTP.");
       }
@@ -120,7 +102,6 @@ const Verification = () => {
                 renderInput={props => (
                   <input
                     {...props}
-                    disabled={!resendAvailable}
                     className="!w-8 !h-8 md:!w-20 md:!h-20 text-center text-xl font-bold border border-[#CFCFCF] rounded-md focus:outline-none focus:ring-2 focus:ring-[#13A6EF] transition-all duration-200"
                   />
                 )}
@@ -136,7 +117,7 @@ const Verification = () => {
             }`}
           >
             {loading ? (
-               <PiSpinnerBold className="animate-spin size-5 fill-black" />
+              <PiSpinnerBold className="animate-spin size-5 fill-black" />
             ) : (
               "Confirm Code"
             )}
@@ -147,16 +128,13 @@ const Verification = () => {
             <button
               type="button"
               onClick={handleResend}
-              disabled={!resendAvailable || loading}
+              disabled={loading}
               className={`font-bold cursor-pointer ${
-                resendAvailable
-                  ? "text-[#222]"
-                  : "text-gray-400 cursor-not-allowed"
+                !loading ? "text-[#222]" : "text-gray-400 cursor-not-allowed"
               }`}
             >
               Resend
-            </button>{" "}
-            {!resendAvailable && `in ${timer}s`}
+            </button>
           </p>
         </form>
       </div>
