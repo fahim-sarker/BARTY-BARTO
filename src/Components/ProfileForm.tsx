@@ -1,11 +1,28 @@
-import { useRef, useState } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiEdit2 } from "react-icons/fi";
-import Avatar1 from "../../public/Avatar1.png";
-import CountrySelect from "./Reusable/CountrySelect";
+import CountrySelect, { type CountryOption } from "./Reusable/CountrySelect";
+import defaultAvatar from "../../public/Avatar1.png";
+import useAxios from "../Hooks/UseAxios";
+import { toast, ToastContainer } from "react-toastify";
+import useFetchData from "../Hooks/UseFetchData";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-type FormData = {
-  firstName: string;
+interface User {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  avatar: string;
+  phone: string;
+  business_name: string;
+  business_address: string;
+}
+
+type ProfileFormValues = {
+  name: string;
   lastName: string;
   email: string;
   phone: string;
@@ -14,38 +31,101 @@ type FormData = {
 };
 
 const ProfileForm = () => {
-  const [avatar, setAvatar] = useState<string>(Avatar1);
-  const [country, setCountry] = useState<string>("United States");
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>(defaultAvatar);
+  const [country, setCountry] = useState<CountryOption | null>({
+    label: "United States",
+    value: "United States",
+    flag: "https://flagcdn.com/w40/us.png",
+    callingCode: "+1",
+  });
+
+  const axiosInstance = useAxios();
   const fileRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<ProfileFormValues>();
 
-  const onSubmit = (data: FormData) => {
-    console.log({ ...data, country, avatar });
-  };
+  const { data } = useFetchData<{ data: User }>("/users/data");
+  const user = data?.data;
+
+  const baseApiUrl = import.meta.env.VITE_BASE_URL.replace(/\/api\/?$/, "");
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        phone: user.phone,
+        businessName: user.business_name,
+        businessAddress: user.business_address,
+      });
+      if (user.avatar) {
+        setAvatarPreview(`${baseApiUrl}/${user.avatar}`);
+      }
+    }
+  }, [user, reset, baseApiUrl]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setAvatar(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatar(reader.result as string);
+        setAvatarPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const mutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      return await axiosInstance.post("/users/data/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+    onSuccess: () => {
+      toast.success("Profile updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["/users/data"] });
+    },
+    onError: () => {
+      toast.error("Something went wrong while updating profile.");
+    },
+  });
+
+  const onSubmit = async (data: ProfileFormValues) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("last_name", data.lastName);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone.replace(/\D/g, ""));
+    formData.append("business_name", data.businessName);
+    formData.append("business_address", data.businessAddress);
+    formData.append("country", country?.value || "");
+    formData.append("calling_code", country?.callingCode || "");
+
+    if (avatar) {
+      formData.append("avatar", avatar);
+    }
+
+    mutation.mutate(formData);
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <ToastContainer />
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Avatar */}
         <div className="relative w-full max-w-[200px] self-center lg:self-start">
           <img
-            src={avatar}
+            src={avatarPreview}
             alt="Avatar"
             className="w-full h-[200px] rounded-full object-cover cursor-pointer"
             onClick={() => fileRef.current?.click()}
@@ -64,24 +144,24 @@ const ProfileForm = () => {
             className="hidden"
           />
         </div>
-        {/* Form fields */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+ 
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               First name
             </h3>
             <input
-              {...register("firstName", { required: "First name is required" })}
+              {...register("name", { required: "First name is required" })}
               placeholder="Charli"
               className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
-            {errors.firstName && (
-              <p className="text-red-600 text-sm mt-1">
-                {errors.firstName.message}
-              </p>
+            {errors.name && (
+              <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>
             )}
           </div>
 
+     
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Last name
@@ -110,7 +190,7 @@ const ProfileForm = () => {
                   message: "Invalid email address",
                 },
               })}
-              placeholder="charlicurs@gmai.com"
+              placeholder="charlicurs@gmail.com"
               className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.email && (
@@ -125,19 +205,27 @@ const ProfileForm = () => {
               Phone number
             </h3>
             <div className="relative w-full">
-              <div className="absolute top-[50%] -translate-y-1/2 left-4">
+              <div className="absolute top-[50%] -translate-y-1/2 left-4 flex items-center gap-2">
                 <CountrySelect
                   value={country}
                   onChange={setCountry}
                   name="country"
-                  className="bg-transparent border-none outline-none pr-4"
+                  className="bg-transparent border-none outline-none"
                 />
+                <span className="text-[16px] text-[#3F3F3F]">
+                  {country?.callingCode}
+                </span>
               </div>
               <input
-                {...register("phone", { required: "Phone number is required" })}
+                {...register("phone", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Phone must be numeric",
+                  },
+                })}
                 type="tel"
-                placeholder="+ 554 564 1564"
-                className="w-full border border-[#CFCFCF] rounded-[8px] py-3 pl-[100px] pr-6 text-[#3F3F3F] text-[16px]"
+                className="w-full border border-[#CFCFCF] rounded-[8px] py-3 pl-[160px] pr-6 text-[#3F3F3F] text-[16px]"
               />
             </div>
             {errors.phone && (
@@ -155,7 +243,7 @@ const ProfileForm = () => {
               {...register("businessName", {
                 required: "Business name is required",
               })}
-              placeholder="Business name here...."
+              placeholder="Business name here..."
               className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.businessName && (
@@ -188,9 +276,9 @@ const ProfileForm = () => {
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
-          className="bg-[#13A6EF] text-white px-8 py-3 rounded-lg cursor-pointer"
+          className="bg-[#13A6EF] text-white px-8 py-3 rounded-lg cursor-pointer hover:bg-[#0f92ce] transition duration-300"
         >
-          Save Changes
+          {mutation.isPending ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </form>

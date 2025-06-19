@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Signup from "../Pages/Authpage/Signup";
-import  RootLayout from "../Layout/RootLayout";
+import RootLayout from "../Layout/RootLayout";
 import Signin from "../Pages/Authpage/Signin";
 import ForgotPassword from "../Pages/Authpage/ForgotPassword";
 import AccountConfiramtion from "../Pages/Authpage/AccountConfiramtion";
@@ -13,12 +13,12 @@ import CreateFlight from "../Pages/Dashboard/CreateFlight";
 import FlightStats from "../Pages/Dashboard/FlightStats";
 import Signature from "../Pages/Dashboard/Signature";
 import Settings from "../Pages/Dashboard/Settings";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout/>,
-    errorElement: "",
+    element: <RootLayout />,
     children: [
       { path: "", element: <Signup /> },
       { path: "/sign-in", element: <Signin /> },
@@ -30,15 +30,56 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <DashboardLayout/>,
-    errorElement: "",
+    element: <DashboardLayout />,
     children: [
-      { path: "/dashboard-form", element: <Dashboardform /> },
-      { path: "/create-flight", element: <CreateFlight /> },
-      { path: "/allpassenger-crew", element: <AllpassengerCrew /> },
-      { path: "/flight-stats", element: <FlightStats /> },
-      { path: "/signature", element: <Signature /> },
-      { path: "/settings", element: <Settings /> },
+      {
+        path: "/dashboard-form",
+        element: (
+          <PrivateRoute>
+            <Dashboardform />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/create-flight",
+        element: (
+          <PrivateRoute>
+            <CreateFlight />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/allpassenger-crew",
+        element: (
+          <PrivateRoute>
+            <AllpassengerCrew />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/flight-stats",
+        element: (
+          <PrivateRoute>
+            <FlightStats />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/signature",
+        element: (
+          <PrivateRoute>
+            <Signature />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/settings",
+        element: (
+          <PrivateRoute>
+            <Settings />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

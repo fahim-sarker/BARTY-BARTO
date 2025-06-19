@@ -2,15 +2,16 @@ import Select from "react-select";
 import type { SingleValue } from "react-select";
 import countries from "world-countries";
 
-type CountryOption = {
+export type CountryOption = {
   label: string;
   value: string;
   flag: string;
+  callingCode: string;
 };
 
 type Props = {
-  value: string;
-  onChange: (value: string) => void;
+  value: CountryOption | null;
+  onChange: (value: CountryOption) => void;
   name?: string;
   error?: { message?: string };
   isReadOnly?: boolean;
@@ -18,9 +19,10 @@ type Props = {
 };
 
 const formattedCountries: CountryOption[] = countries.map(country => ({
-  label: country.name.common,
-  value: country.name.common,
+  label: country.cca2,
+  value: country.cca2,
   flag: `https://flagcdn.com/w40/${country.cca2.toLowerCase()}.png`,
+  callingCode: country.idd.root + (country.idd.suffixes?.[0] || ""),
 }));
 
 const CountrySelect = ({
@@ -31,10 +33,13 @@ const CountrySelect = ({
   isReadOnly,
   className,
 }: Props) => {
-  const selected = formattedCountries.find(c => c.value === value) || null;
+  const selected =
+    formattedCountries.find(c => c.value === value?.value) || null;
 
   const handleChange = (selectedOption: SingleValue<CountryOption>) => {
-    onChange(selectedOption ? selectedOption.value : "");
+    if (selectedOption) {
+      onChange(selectedOption);
+    }
   };
 
   return (
@@ -52,8 +57,9 @@ const CountrySelect = ({
             <img
               src={option.flag}
               alt={option.label}
-              className="w-5 h-4 object-cover rounded-sm"
+              className="w-6 h-4 object-cover rounded-sm"
             />
+            <span>{option.label}</span>
           </div>
         )}
         styles={{

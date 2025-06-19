@@ -2,15 +2,19 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Authbg from "/authbg.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAxios from "../../Hooks/UseAxios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type FormData = {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
-  confirmPassword: string;
-  terms: boolean;
+  password_confirmation: string;
+  agree_to_terms: boolean;
 };
 
 const Signup = () => {
@@ -22,10 +26,35 @@ const Signup = () => {
   } = useForm<FormData>();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const Axiosinstance = useAxios();
+  const navigate = useNavigate();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    const finalData = { ...data };
+    setLoading(true);
+    try {
+      const response = await Axiosinstance.post("/users/register", finalData);
+      if (response.data?.success) {
+        toast.success(response.data.message || "Signup successful!");
+        setTimeout(() => {
+          navigate(
+            `/verification?email=${encodeURIComponent(data?.email)}`
+          );
+        }, 2000);
+      } else {
+        toast.error("Signup failed. Please try again.");
+      }
+    } catch (error: any) {
+      const err =
+        error.response?.data?.data?.password?.[0] ||
+        error.response?.data?.message ||
+        "Something went wrong";
+      toast.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,6 +62,7 @@ const Signup = () => {
       className="bg-cover bg-center bg-no-repeat w-full lg:pt-[220px] pt-32 lg:pb-20 pb-10 px-4 sm:px-8"
       style={{ backgroundImage: `url(${Authbg})` }}
     >
+      <ToastContainer />
       <div className="bg-white max-w-5xl w-full mx-auto px-6 sm:px-10 md:px-16 py-10 rounded-2xl backdrop-blur-lg">
         <h2 className="text-3xl sm:text-4xl text-center font-sans text-[#222] font-bold">
           Sign up
@@ -48,15 +78,15 @@ const Signup = () => {
                 First name
               </h3>
               <input
-                {...register("firstName", {
+                {...register("first_name", {
                   required: "First name is required",
                 })}
                 placeholder="Charli"
                 className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
-              {errors.firstName && (
+              {errors.first_name && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.firstName.message}
+                  {errors.first_name.message}
                 </p>
               )}
             </div>
@@ -66,15 +96,15 @@ const Signup = () => {
                 Last name
               </h3>
               <input
-                {...register("lastName", {
+                {...register("last_name", {
                   required: "Last name is required",
                 })}
                 placeholder="Curs"
                 className="border border-[#CFCFCF] rounded-md py-3 px-4 text-[#5A5C5F] text-base w-full"
               />
-              {errors.lastName && (
+              {errors.last_name && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.lastName.message}
+                  {errors.last_name.message}
                 </p>
               )}
             </div>
@@ -137,7 +167,7 @@ const Signup = () => {
               </h3>
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                {...register("confirmPassword", {
+                {...register("password_confirmation", {
                   required: "Confirm your password",
                   validate: value =>
                     value === watch("password") || "Passwords do not match",
@@ -155,9 +185,9 @@ const Signup = () => {
                   <AiOutlineEyeInvisible size={20} />
                 )}
               </div>
-              {errors.confirmPassword && (
+              {errors.password_confirmation && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.confirmPassword.message}
+                  {errors.password_confirmation.message}
                 </p>
               )}
             </div>
@@ -166,7 +196,7 @@ const Signup = () => {
           <div className="flex items-start gap-3 pt-6">
             <input
               type="checkbox"
-              {...register("terms", { required: true })}
+              {...register("agree_to_terms", { required: true })}
               className="w-5 h-5 mt-1 rounded border border-black checked:bg-black cursor-pointer"
             />
             <p className="text-sm sm:text-base text-[#494949]">
@@ -176,7 +206,7 @@ const Signup = () => {
               that I am over 18 years of age.
             </p>
           </div>
-          {errors.terms && (
+          {errors.agree_to_terms && (
             <p className="text-red-500 text-sm mt-2">
               You must accept the terms
             </p>
@@ -184,9 +214,14 @@ const Signup = () => {
 
           <button
             type="submit"
-            className="bg-[#13A6EF] hover:bg-white hover:text-black transition-all duration-300 border border-[#13A6EF] text-white text-lg font-bold py-4 w-full rounded-md mt-8 cursor-pointer"
+            disabled={loading}
+            className="bg-[#13A6EF] hover:bg-white hover:text-black transition-all duration-300 border border-[#13A6EF] text-white text-lg font-bold py-4 w-full rounded-md mt-8 cursor-pointer flex justify-center items-center"
           >
-            Registration
+            {loading ? (
+              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+            ) : (
+              "Registration"
+            )}
           </button>
 
           <h4 className="text-center text-[#5A5C5F] text-base font-medium mt-5">

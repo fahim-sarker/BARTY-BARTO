@@ -18,7 +18,7 @@ const columns: TableColumnsType<DataType> = [
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
         Full Name
       </span>
-    ), // Customize font size for Full Name
+    ), 
     dataIndex: "name",
     render: (text: string) => (
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
@@ -31,7 +31,7 @@ const columns: TableColumnsType<DataType> = [
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
         Passport Number
       </span>
-    ), // Customize font size for Passport Number
+    ), 
     dataIndex: "passportNumber",
     render: (text: string) => (
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
@@ -44,7 +44,7 @@ const columns: TableColumnsType<DataType> = [
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
         Nationality
       </span>
-    ), // Customize font size for Nationality
+    ), 
     dataIndex: "nationality",
     render: (text: string) => (
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">
@@ -57,7 +57,7 @@ const columns: TableColumnsType<DataType> = [
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[400] leading-normal">
         Date Of Birth
       </span>
-    ), // Customize font size for Date Of Birth
+    ),
     dataIndex: "dateOfBirth",
     render: (text: string) => (
       <span className="text-[var(--PM-Text-Color)]  lg:text-[16px] font-[500] leading-normal">

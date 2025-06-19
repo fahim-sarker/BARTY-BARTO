@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PassportOCR from "../../Components/PassportOCR";
 
 const Signature = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -92,6 +93,7 @@ const Signature = () => {
           Save Signature
         </button>
       </div>
+      <PassportOCR/>
     </section>
   );
 };

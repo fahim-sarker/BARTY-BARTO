@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Authbg from "/authbg.jpg";
+import useAxios from "../../Hooks/UseAxios";
+import { toast, ToastContainer } from "react-toastify";
+import { PiSpinnerBold } from "react-icons/pi";
 
 type FormData = {
   email: string;
@@ -11,7 +14,10 @@ type FormData = {
 };
 
 const Signin = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const Axiosinstance = useAxios();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -19,9 +25,34 @@ const Signin = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log("Login data:", data);
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    try {
+      const response = await Axiosinstance.post("/users/login", data);
+
+      if (response.data?.success && response.data?.data?.token) {
+        const token = response.data.data.token;
+        localStorage.setItem("authToken", token);
+        toast.success("Login successful!");
+
+
+        const redirectPath =
+          localStorage.getItem("redirectPath") || "/flight-stats";
+        localStorage.removeItem("redirectPath");
+
+        setTimeout(() => {
+          navigate(redirectPath);
+        }, 1500);
+      } else {
+        toast.error("Login failed");
+      }
+    } catch (error: any) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   return (
     <section
@@ -34,7 +65,7 @@ const Signin = () => {
         </h2>
         <h4 className="text-base sm:text-[18px] text-[#5A5C5F] font-medium text-center mt-4">
           Don’t have an account?{" "}
-          <Link to="/sign-up" className="text-[#222] font-bold">
+          <Link to="/" className="text-[#222] font-bold">
             Sign up
           </Link>
         </h4>
@@ -113,12 +144,17 @@ const Signin = () => {
 
           <button
             type="submit"
-            className="bg-[#13A6EF] py-[16px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out"
+            className="bg-[#13A6EF] py-[16px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out flex justify-center items-center gap-2"
           >
-            Log In
+            {loading ? (
+              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+            ) : (
+              "Log In"
+            )}
           </button>
         </form>
       </div>
+      <ToastContainer />
     </section>
   );
 };

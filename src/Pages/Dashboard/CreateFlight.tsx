@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -7,6 +8,7 @@ import interactionPlugin, {
 import type { EventClickArg, EventInput } from "@fullcalendar/core";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type FlightData = {
   note: string;
@@ -16,19 +18,24 @@ type FlightData = {
 };
 
 const CreateFlight = () => {
+
   const [events, setEvents] = useState<EventInput[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [flightDataMap, setFlightDataMap] = useState<
-    Record<string, FlightData>
-  >({});
+  const [flightDataMap, setFlightDataMap] = useState<Record<string, FlightData>>({});
+  
+  
   const calendarRef = useRef<FullCalendar | null>(null);
   const today = format(new Date(), "yyyy-MM-dd");
   const navigate = useNavigate();
 
-  // Load saved data from localStorage on mount
+  const [image, setImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  console.log(error);
+
   useEffect(() => {
     const stored = localStorage.getItem("flightDataMap");
     if (stored) {
@@ -49,7 +56,7 @@ const CreateFlight = () => {
     if (existing) {
       setNote(existing.note);
       setPreview(existing.fileBase64 || null);
-      setFile(null); // clear current file so we don't overwrite preview
+      setFile(null);
     } else {
       setNote("");
       setFile(null);
@@ -83,7 +90,7 @@ const CreateFlight = () => {
 
   const handleUpload = async () => {
     if (!selectedDate) {
-      alert("Please select a date first.");
+      toast.error("Please select a date first.");
       return;
     }
 
@@ -106,38 +113,108 @@ const CreateFlight = () => {
         fileType,
       },
     };
+
     setFlightDataMap(newFlightDataMap);
     localStorage.setItem("flightDataMap", JSON.stringify(newFlightDataMap));
 
-    const exists = events.some(e => e.date === selectedDate);
-    if (!exists) {
+    if (!events.some(e => e.date === selectedDate)) {
       setEvents(prev => [...prev, { title: "Flight", date: selectedDate }]);
     }
-
-    alert("Flight saved.");
+    toast.success("Flight declaration uploaded.");
     setNote("");
     setFile(null);
     setPreview(null);
     setSelectedDate(null);
-    navigate("/dashboard-form");
+  };
+  const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
+  const model = import.meta.env.VITE_OPENAI_MODEL;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFile(file);
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+      setError("");
+    }
   };
 
-  const handleDownload = () => {
-    if (!selectedDate) return;
-    const flightData = flightDataMap[selectedDate];
-    if (!flightData?.fileBase64 || !flightData.fileName) return;
+  const handleScanAndSave = async () => {
+    if (!image || !selectedDate) {
+      toast.error("Please upload an image and select a date first.");
+      return;
+    }
 
-    const link = document.createElement("a");
-    link.href = flightData.fileBase64;
-    link.download = flightData.fileName;
-    link.click();
+    setLoading(true);
+    setError("");
+
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64 = (reader.result as string).split(",")[1];
+
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: "Extract non-sensitive, structured information (full name, passport number, nationality, date of birth) from this passport image. Return JSON only.",
+                  },
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: `data:image/jpeg;base64,${base64}`,
+                    },
+                  },
+                ],
+              },
+            ],
+            max_tokens: 1000,
+          }),
+        });
+
+        const result = await response.json();
+        const rawContent = result.choices?.[0]?.message?.content || "";
+        const match = rawContent.match(/```json\n([\s\S]*?)\n```/);
+
+        if (match && match[1]) {
+          const extractedJson = JSON.parse(match[1]);
+          const payload = {
+            data: extractedJson,
+            selectedDate,
+          };
+          localStorage.setItem("passengerData", JSON.stringify(payload));
+          toast.success("Passport data extracted & saved!");
+          navigate("/dashboard-form");
+        } else {
+          toast.error("AI did not return valid passport data.");
+        }
+
+        setLoading(false);
+        handleUpload();
+      };
+
+      reader.readAsDataURL(image);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to extract or save passport data.");
+      setLoading(false);
+    }
   };
 
   const isEditMode = selectedDate && flightDataMap[selectedDate];
 
   return (
     <div className="2xl:flex gap-x-10 justify-between bg-[#f9fafb] min-h-screen font-sans">
-      {/* Calendar */}
       <div className="2xl:w-2/3 w-full bg-white rounded-lg shadow p-4">
         <h2 className="text-lg font-semibold py-5 border-b border-[#E4E6E8]">
           Create A Flight
@@ -150,7 +227,6 @@ const CreateFlight = () => {
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 initialDate={today}
-                viewHeight={500}
                 events={events}
                 dateClick={handleDateClick}
                 eventClick={handleEventClick}
@@ -172,7 +248,7 @@ const CreateFlight = () => {
                 eventContent={arg => (
                   <div className="flex items-center gap-1 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                     <span className="text-green-500">●</span>
-                    <span>{arg.event.title}</span>
+                    <span className="text-black">{arg.event.title}</span>
                   </div>
                 )}
                 height="auto"
@@ -182,12 +258,11 @@ const CreateFlight = () => {
         </div>
       </div>
 
-      {/* Right Panel */}
       <div className="2xl:w-1/3 w-full 2xl:mt-0 mt-10 bg-white rounded-lg shadow p-10 flex flex-col gap-6 self-start">
         <div>
           <label className="block text-sm font-medium mb-2">Add a note</label>
           <textarea
-            className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-lg p-3 text-sm"
             rows={5}
             placeholder="Enter flight notes here..."
             value={note}
@@ -199,23 +274,17 @@ const CreateFlight = () => {
           <label className="block text-sm font-medium mb-2">
             {isEditMode ? "Declaration" : "Upload passenger passport"}
           </label>
-
           <label
             htmlFor="fileUpload"
-            className="cursor-pointer border-2 border-dashed border-gray-300 h-full w-full flex items-center rounded-lg p-4 text-center bg-[#f9fafb]  justify-center"
+            className="cursor-pointer border-2 border-dashed border-gray-300 h-full w-full flex items-center rounded-lg p-4 text-center bg-[#f9fafb] justify-center"
           >
             <input
               id="fileUpload"
               type="file"
               className="hidden"
               accept=".pdf,.png,.jpg,.jpeg"
-              onChange={e => {
-                const selected = e.target.files?.[0] || null;
-                setFile(selected);
-                setPreview(selected ? URL.createObjectURL(selected) : null);
-              }}
+              onChange={handleFileChange}
             />
-
             <div className="flex flex-col items-center justify-center gap-2 w-full">
               {preview ? (
                 preview.startsWith("data:application/pdf") ||
@@ -254,7 +323,7 @@ const CreateFlight = () => {
                   </p>
                   <button
                     type="button"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-fit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-fit cursor-pointer"
                     onClick={() =>
                       document.getElementById("fileUpload")?.click()
                     }
@@ -277,29 +346,12 @@ const CreateFlight = () => {
           </p>
         )}
 
-        {isEditMode ? (
-          <div className="flex gap-4">
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-1/2"
-              onClick={handleUpload}
-            >
-              Edit Declaration
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-1/2"
-              onClick={handleDownload}
-            >
-              Download
-            </button>
-          </div>
-        ) : (
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-full"
-            onClick={handleUpload}
-          >
-            Generate Declaration
-          </button>
-        )}
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-full mt-2 cursor-pointer"
+          onClick={handleScanAndSave}
+        >
+          {loading ? "Scanning..." : "Generate Declaration"}
+        </button>
       </div>
     </div>
   );
