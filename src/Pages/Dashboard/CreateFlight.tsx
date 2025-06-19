@@ -7,6 +7,7 @@ import interactionPlugin, {
 import type { EventClickArg, EventInput } from "@fullcalendar/core";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type FlightData = {
   note: string;
@@ -28,7 +29,7 @@ const CreateFlight = () => {
   const today = format(new Date(), "yyyy-MM-dd");
   const navigate = useNavigate();
 
-  // Load saved data from localStorage
+
   useEffect(() => {
     const stored = localStorage.getItem("flightDataMap");
     if (stored) {
@@ -135,6 +136,104 @@ const CreateFlight = () => {
 
   const isEditMode = selectedDate && flightDataMap[selectedDate];
 
+  const [image, setImage] = useState<File | null>(null);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  console.log(error);
+  
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setText("");
+      setError("");
+    }
+  };
+
+
+  const handleScan = async () => {
+    if (!image || !selectedDate) {
+      toast.error("Please upload an image and select a date first.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setText("");
+
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64 = (reader.result as string).split(",")[1];
+
+        const response = await fetch(
+          "https://api.openai.com/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gpt-4o",
+              messages: [
+                {
+                  role: "user",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Extract non-sensitive, structured information (full name, passport number, nationality, date of birth) from this **sample passport image**. Return JSON only.",
+                    },
+                    {
+                      type: "image_url",
+                      image_url: {
+                        url: `data:image/jpeg;base64,${base64}`,
+                      },
+                    },
+                  ],
+                },
+              ],
+              max_tokens: 1000,
+            }),
+          }
+        );
+
+        const result = await response.json();
+        const rawContent = result.choices?.[0]?.message?.content || "";
+
+        setText(rawContent);
+
+        const match = rawContent.match(/```json\n([\s\S]*?)\n```/);
+        if (match && match[1]) {
+          const extractedJson = JSON.parse(match[1]);
+
+          const payload = {
+            data: extractedJson,
+            selectedDate,
+          };
+
+          localStorage.setItem("passengerData", JSON.stringify(payload));
+
+          toast.success("Extracted passport data !");
+        } else {
+          toast.error("AI did not return valid passport data.");
+        }
+
+        setLoading(false);
+      };
+
+      reader.readAsDataURL(image);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to extract or save passport data.");
+      setLoading(false);
+    }
+  };
+  
+  
+
   return (
     <div className="2xl:flex gap-x-10 justify-between bg-[#f9fafb] min-h-screen font-sans">
       {/* Calendar */}
@@ -216,7 +315,7 @@ const CreateFlight = () => {
               }}
             />
 
-            <div className="flex flex-col items-center justify-center gap-2 w-full">
+            {/* <div className="flex flex-col items-center justify-center gap-2 w-full">
               {preview ? (
                 preview.startsWith("data:application/pdf") ||
                 preview.endsWith(".pdf") ? (
@@ -262,6 +361,39 @@ const CreateFlight = () => {
                     Upload Files
                   </button>
                 </>
+              )}
+            </div> */}
+            <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+              <h2 className="text-2xl font-bold mb-4">
+                Passport info extract with AI
+              </h2>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="mb-4"
+              />
+
+              <button
+                onClick={handleScan}
+                disabled={loading || !image}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 disabled:opacity-50"
+              >
+                {loading ? "Scanning..." : "Scan Passport"}
+              </button>
+
+              {/* {error && <p className="text-red-500 mt-4">{error}</p>} */}
+
+              {text && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-2">
+                    Extracted Info:
+                  </h3>
+                  <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto whitespace-pre-wrap">
+                    {text}
+                  </pre>
+                </div>
               )}
             </div>
           </label>

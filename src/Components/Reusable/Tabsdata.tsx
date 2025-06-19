@@ -1,3 +1,5 @@
+import { forwardRef, useRef, useImperativeHandle } from "react";
+
 const data = [
   {
     nationality: "USA",
@@ -20,27 +22,62 @@ const data = [
     detail: "Pax: Mackenzte Carroll, 12 Apr 2001, ACYJ637466",
   },
 ];
-const Tabsdata = () => {
+
+const Tabsdata = forwardRef((props, ref) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    getEditableData: () => {
+      if (!containerRef.current) return null;
+
+      const editableElements =
+        containerRef.current.querySelectorAll<HTMLElement>(
+          '[contenteditable="true"]'
+        );
+
+      const data: Record<string, string> = {};
+
+      editableElements.forEach((el, index) => {
+        const key = el.getAttribute("data-key") || `field${index}`;
+        data[key] = el.textContent?.trim() || "";
+      });
+
+      return data;
+    },
+  }));
+
   return (
-    <>
+    <div ref={containerRef}>
       {/* Top Info Section */}
       <div className="flex flex-col lg:flex-row justify-between gap-5">
         <div className="flex flex-col gap-2">
           <h5 className="font-sans font-semibold text-2xl sm:text-3xl text-[#222] flex gap-x-1 items-center">
             Owner or Operator:
-            <span className="text-[#222] font-normal" contentEditable={true}>
+            <span
+              data-key="owner"
+              className="text-[#222] font-normal"
+              contentEditable={true}
+            >
               Caribbean Buzz, LLC
             </span>
           </h5>
           <h5 className="font-sans font-semibold text-2xl sm:text-3xl text-[#222] flex gap-x-1 items-center">
             Registration:
-            <span className="text-[#222] font-normal" contentEditable={true}>
+            <span
+              data-key="registration_number"
+              className="text-[#222] font-normal"
+              contentEditable={true}
+            >
               N282ZZ
             </span>
           </h5>
           <h5 className="font-sans font-semibold text-2xl sm:text-3xl text-[#222] flex gap-x-1 items-center">
             Flight:
-            <span className="text-[#222] font-normal" contentEditable={true}>
+            <span
+              data-key="flight_no"
+              className="text-[#222] font-normal"
+              contentEditable={true}
+            >
               103
             </span>
           </h5>
@@ -49,19 +86,31 @@ const Tabsdata = () => {
         <div className="flex flex-col gap-2 text-end">
           <h5 className="font-sans font-semibold text-2xl sm:text-3xl text-[#222] flex gap-x-1 justify-end">
             Flight Date:
-            <span className="text-[#222] font-normal" contentEditable={true}>
+            <span
+              data-key="flight_date"
+              className="text-[#222] font-normal"
+              contentEditable={true}
+            >
               26 May 2025
             </span>
           </h5>
           <h5 className="font-sans font-semibold text-2xl sm:text-3xl text-[#222] flex gap-x-1 justify-end">
             Arrival:
-            <span className="text-[#222] font-normal" contentEditable={true}>
+            <span
+              data-key="arrival"
+              className="text-[#222] font-normal"
+              contentEditable={true}
+            >
               (VIJ)
             </span>
           </h5>
           <h5 className="font-sans font-semibold text-2xl sm:text-3xl text-[#222] flex gap-x-1 justify-end">
             Departure:
-            <span className="text-[#222] font-normal" contentEditable={true}>
+            <span
+              data-key="departure"
+              className="text-[#222] font-normal"
+              contentEditable={true}
+            >
               (STT)
             </span>
           </h5>
@@ -90,7 +139,8 @@ const Tabsdata = () => {
             {data.map((item, index) => (
               <li
                 key={index}
-                contentEditable
+                contentEditable={true}
+                data-key={`nationality_${index}`}
                 className="py-4 px-2 text-center font-sans text-lg text-[#222] border-b border-[#222] last:border-b-0"
               >
                 {item.nationality}
@@ -108,7 +158,8 @@ const Tabsdata = () => {
             {data.map((item, index) => (
               <li
                 key={index}
-                contentEditable
+                contentEditable={true}
+                data-key={`detail_${index}`}
                 className="py-4 px-4 font-sans text-lg text-[#222] border-b border-[#222] last:border-b-0"
               >
                 {item.detail}
@@ -135,6 +186,7 @@ const Tabsdata = () => {
                   {label}
                 </h4>
                 <h5
+                  data-key={`summary_${index}`}
                   className="text-base font-sans text-[#222] font-medium"
                   contentEditable={["STT", "VIJ"].includes(value)}
                 >
@@ -164,7 +216,10 @@ const Tabsdata = () => {
               <p className="font-sans text-base sm:text-lg text-[#222]">
                 {text}
               </p>
-              <h5 className="text-xl font-sans text-[#222] font-semibold py-2">
+              <h5
+                data-key={`health_none_${i}`}
+                className="text-xl font-sans text-[#222] font-semibold py-2"
+              >
                 None
               </h5>
               <div className="border-b border-[#222]"></div>
@@ -180,10 +235,16 @@ const Tabsdata = () => {
           <h2 className="text-2xl pl-4 sm:text-3xl font-semibold text-[#222] font-sans text-center border-b-2 border-[#222] pb-4">
             FOR OFFICIAL USE ONLY
           </h2>
-          <h5 className="text-xl pl-4 font-medium text-[#222] font-sans mt-5">
+          <h5
+            data-key="official_block"
+            className="text-xl pl-4 font-medium text-[#222] font-sans mt-5"
+          >
             BLOCK:
           </h5>
-          <h5 className="text-xl pl-4 font-medium text-[#222] font-sans mt-8">
+          <h5
+            data-key="official_etd"
+            className="text-xl pl-4 font-medium text-[#222] font-sans mt-8"
+          >
             ETD:
           </h5>
         </div>
@@ -191,7 +252,10 @@ const Tabsdata = () => {
 
       {/* Final Declaration */}
       <div className="mt-5">
-        <p className="font-sans text-base sm:text-lg text-[#222]">
+        <p
+          data-key="final_declaration"
+          className="font-sans text-base sm:text-lg text-[#222]"
+        >
           I declare that all statements and particulars contained in this
           General Declaration...
         </p>
@@ -205,8 +269,8 @@ const Tabsdata = () => {
           Authorized Agent or Pilot-in Command
         </h4>
       </div>
-    </>
+    </div>
   );
-};
+});
 
 export default Tabsdata;
