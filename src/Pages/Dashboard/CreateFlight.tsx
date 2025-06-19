@@ -126,6 +126,8 @@ const CreateFlight = () => {
     setPreview(null);
     setSelectedDate(null);
   };
+  const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
+  const model = import.meta.env.VITE_OPENAI_MODEL;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -151,37 +153,34 @@ const CreateFlight = () => {
       reader.onloadend = async () => {
         const base64 = (reader.result as string).split(",")[1];
 
-        const response = await fetch(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "gpt-4o",
-              messages: [
-                {
-                  role: "user",
-                  content: [
-                    {
-                      type: "text",
-                      text: "Extract non-sensitive, structured information (full name, passport number, nationality, date of birth) from this passport image. Return JSON only.",
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: "Extract non-sensitive, structured information (full name, passport number, nationality, date of birth) from this passport image. Return JSON only.",
+                  },
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: `data:image/jpeg;base64,${base64}`,
                     },
-                    {
-                      type: "image_url",
-                      image_url: {
-                        url: `data:image/jpeg;base64,${base64}`,
-                      },
-                    },
-                  ],
-                },
-              ],
-              max_tokens: 1000,
-            }),
-          }
-        );
+                  },
+                ],
+              },
+            ],
+            max_tokens: 1000,
+          }),
+        });
 
         const result = await response.json();
         const rawContent = result.choices?.[0]?.message?.content || "";

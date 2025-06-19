@@ -14,7 +14,8 @@ const PassportOCR = () => {
       setError("");
     }
   };
-
+  const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
+  const model = import.meta.env.VITE_OPENAI_MODEL;
   const handleScan = async () => {
     if (!image) {
       setError("Please upload an image first.");
@@ -31,38 +32,34 @@ const PassportOCR = () => {
         const base64 = (reader.result as string).split(",")[1];
         console.log(base64);
 
-        const response = await fetch(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              Authorization:
-                "Bearer ",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "gpt-4o",
-              messages: [
-                {
-                  role: "user",
-                  content: [
-                    {
-                      type: "text",
-                      text: "Extract full name, passport number, nationality, and date of birth from this passport image. Return result as JSON.",
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer ",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: "Extract full name, passport number, nationality, and date of birth from this passport image. Return result as JSON.",
+                  },
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: "https://www.canada.ca/content/dam/ircc/images/services/canadian-passports/passport-data-page-large.jpg",
                     },
-                    {
-                      type: "image_url",
-                      image_url: {
-                        url: "https://www.canada.ca/content/dam/ircc/images/services/canadian-passports/passport-data-page-large.jpg",
-                      },
-                    },
-                  ],
-                },
-              ],
-              max_tokens: 1000,
-            }),
-          }
-        );
+                  },
+                ],
+              },
+            ],
+            max_tokens: 1000,
+          }),
+        });
 
         const result = await response.json();
         const extracted = result.choices?.[0]?.message?.content;
