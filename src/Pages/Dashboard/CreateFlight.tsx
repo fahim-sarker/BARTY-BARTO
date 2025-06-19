@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -17,18 +18,23 @@ type FlightData = {
 };
 
 const CreateFlight = () => {
+
   const [events, setEvents] = useState<EventInput[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [flightDataMap, setFlightDataMap] = useState<
-    Record<string, FlightData>
-  >({});
+  const [flightDataMap, setFlightDataMap] = useState<Record<string, FlightData>>({});
+  
+  
   const calendarRef = useRef<FullCalendar | null>(null);
   const today = format(new Date(), "yyyy-MM-dd");
   const navigate = useNavigate();
 
+  const [image, setImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  console.log(error);
 
   useEffect(() => {
     const stored = localStorage.getItem("flightDataMap");
@@ -84,7 +90,7 @@ const CreateFlight = () => {
 
   const handleUpload = async () => {
     if (!selectedDate) {
-      alert("Please select a date first.");
+      toast.error("Please select a date first.");
       return;
     }
 
@@ -107,53 +113,31 @@ const CreateFlight = () => {
         fileType,
       },
     };
+
     setFlightDataMap(newFlightDataMap);
     localStorage.setItem("flightDataMap", JSON.stringify(newFlightDataMap));
 
-    const exists = events.some(e => e.date === selectedDate);
-    if (!exists) {
+    if (!events.some(e => e.date === selectedDate)) {
       setEvents(prev => [...prev, { title: "Flight", date: selectedDate }]);
     }
-
-    alert("Flight saved.");
+    toast.success("Flight declaration uploaded.");
     setNote("");
     setFile(null);
     setPreview(null);
     setSelectedDate(null);
-    navigate("/dashboard-form");
   };
-
-  const handleDownload = () => {
-    if (!selectedDate) return;
-    const flightData = flightDataMap[selectedDate];
-    if (!flightData?.fileBase64 || !flightData.fileName) return;
-
-    const link = document.createElement("a");
-    link.href = flightData.fileBase64;
-    link.download = flightData.fileName;
-    link.click();
-  };
-
-  const isEditMode = selectedDate && flightDataMap[selectedDate];
-
-  const [image, setImage] = useState<File | null>(null);
-  const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  console.log(error);
-  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFile(file);
       setImage(file);
-      setText("");
+      setPreview(URL.createObjectURL(file));
       setError("");
     }
   };
 
-
-  const handleScan = async () => {
+  const handleScanAndSave = async () => {
     if (!image || !selectedDate) {
       toast.error("Please upload an image and select a date first.");
       return;
@@ -161,7 +145,6 @@ const CreateFlight = () => {
 
     setLoading(true);
     setError("");
-    setText("");
 
     try {
       const reader = new FileReader();
@@ -184,7 +167,7 @@ const CreateFlight = () => {
                   content: [
                     {
                       type: "text",
-                      text: "Extract non-sensitive, structured information (full name, passport number, nationality, date of birth) from this **sample passport image**. Return JSON only.",
+                      text: "Extract non-sensitive, structured information (full name, passport number, nationality, date of birth) from this passport image. Return JSON only.",
                     },
                     {
                       type: "image_url",
@@ -202,26 +185,23 @@ const CreateFlight = () => {
 
         const result = await response.json();
         const rawContent = result.choices?.[0]?.message?.content || "";
-
-        setText(rawContent);
-
         const match = rawContent.match(/```json\n([\s\S]*?)\n```/);
+
         if (match && match[1]) {
           const extractedJson = JSON.parse(match[1]);
-
           const payload = {
             data: extractedJson,
             selectedDate,
           };
-
           localStorage.setItem("passengerData", JSON.stringify(payload));
-
-          toast.success("Extracted passport data !");
+          toast.success("Passport data extracted & saved!");
+          navigate("/dashboard-form");
         } else {
           toast.error("AI did not return valid passport data.");
         }
 
         setLoading(false);
+        handleUpload();
       };
 
       reader.readAsDataURL(image);
@@ -231,12 +211,11 @@ const CreateFlight = () => {
       setLoading(false);
     }
   };
-  
-  
+
+  const isEditMode = selectedDate && flightDataMap[selectedDate];
 
   return (
     <div className="2xl:flex gap-x-10 justify-between bg-[#f9fafb] min-h-screen font-sans">
-      {/* Calendar */}
       <div className="2xl:w-2/3 w-full bg-white rounded-lg shadow p-4">
         <h2 className="text-lg font-semibold py-5 border-b border-[#E4E6E8]">
           Create A Flight
@@ -249,7 +228,6 @@ const CreateFlight = () => {
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 initialDate={today}
-                viewHeight={500}
                 events={events}
                 dateClick={handleDateClick}
                 eventClick={handleEventClick}
@@ -281,12 +259,11 @@ const CreateFlight = () => {
         </div>
       </div>
 
-      {/* Right Panel */}
       <div className="2xl:w-1/3 w-full 2xl:mt-0 mt-10 bg-white rounded-lg shadow p-10 flex flex-col gap-6 self-start">
         <div>
           <label className="block text-sm font-medium mb-2">Add a note</label>
           <textarea
-            className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-lg p-3 text-sm"
             rows={5}
             placeholder="Enter flight notes here..."
             value={note}
@@ -298,24 +275,18 @@ const CreateFlight = () => {
           <label className="block text-sm font-medium mb-2">
             {isEditMode ? "Declaration" : "Upload passenger passport"}
           </label>
-
           <label
             htmlFor="fileUpload"
-            className="cursor-pointer border-2 border-dashed border-gray-300 h-full w-full flex items-center rounded-lg p-4 text-center bg-[#f9fafb]  justify-center"
+            className="cursor-pointer border-2 border-dashed border-gray-300 h-full w-full flex items-center rounded-lg p-4 text-center bg-[#f9fafb] justify-center"
           >
             <input
               id="fileUpload"
               type="file"
               className="hidden"
               accept=".pdf,.png,.jpg,.jpeg"
-              onChange={e => {
-                const selected = e.target.files?.[0] || null;
-                setFile(selected);
-                setPreview(selected ? URL.createObjectURL(selected) : null);
-              }}
+              onChange={handleFileChange}
             />
-
-            {/* <div className="flex flex-col items-center justify-center gap-2 w-full">
+            <div className="flex flex-col items-center justify-center gap-2 w-full">
               {preview ? (
                 preview.startsWith("data:application/pdf") ||
                 preview.endsWith(".pdf") ? (
@@ -353,7 +324,7 @@ const CreateFlight = () => {
                   </p>
                   <button
                     type="button"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-fit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-fit cursor-pointer"
                     onClick={() =>
                       document.getElementById("fileUpload")?.click()
                     }
@@ -361,39 +332,6 @@ const CreateFlight = () => {
                     Upload Files
                   </button>
                 </>
-              )}
-            </div> */}
-            <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-              <h2 className="text-2xl font-bold mb-4">
-                Passport info extract with AI
-              </h2>
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="mb-4"
-              />
-
-              <button
-                onClick={handleScan}
-                disabled={loading || !image}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 disabled:opacity-50"
-              >
-                {loading ? "Scanning..." : "Scan Passport"}
-              </button>
-
-              {/* {error && <p className="text-red-500 mt-4">{error}</p>} */}
-
-              {text && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-2">
-                    Extracted Info:
-                  </h3>
-                  <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto whitespace-pre-wrap">
-                    {text}
-                  </pre>
-                </div>
               )}
             </div>
           </label>
@@ -409,29 +347,12 @@ const CreateFlight = () => {
           </p>
         )}
 
-        {isEditMode ? (
-          <div className="md:flex gap-4">
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm md:w-1/2 w-full"
-              onClick={handleUpload}
-            >
-              Edit Declaration
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm md:w-1/2 w-full md:mt-0 mt-3"
-              onClick={handleDownload}
-            >
-              Download
-            </button>
-          </div>
-        ) : (
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-full md:mt-0 mt-3"
-            onClick={handleUpload}
-          >
-            Generate Declaration
-          </button>
-        )}
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm w-full mt-2 cursor-pointer"
+          onClick={handleScanAndSave}
+        >
+          {loading ? "Scanning..." : "Generate Declaration"}
+        </button>
       </div>
     </div>
   );

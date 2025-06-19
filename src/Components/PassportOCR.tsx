@@ -30,7 +30,6 @@ const PassportOCR = () => {
       reader.onloadend = async () => {
         const base64 = (reader.result as string).split(",")[1];
         console.log(base64);
-        
 
         const response = await fetch(
           "https://api.openai.com/v1/chat/completions",
@@ -38,7 +37,7 @@ const PassportOCR = () => {
             method: "POST",
             headers: {
               Authorization:
-                "Bearer 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",
+                "Bearer ",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({

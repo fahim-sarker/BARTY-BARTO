@@ -5,6 +5,7 @@ import { FaArrowDownLong } from "react-icons/fa6";
 import { IoIosShareAlt } from "react-icons/io";
 import Tabsdata from "../../Components/Reusable/Tabsdata";
 import useAxios from "../../Hooks/UseAxios";
+import { toast } from "react-toastify";
 
 const Dashboardform = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -61,13 +62,14 @@ const Dashboardform = () => {
     try {
       const response = await Axiosinstance.post("/flight", payload);
       if (response.status === 200 || response.status === 201) {
-        alert("Data saved successfully!");
+        toast.success("Data saved successfully!");
+        localStorage.removeItem("passengerData");
       } else {
-        alert("Failed to save data");
+        toast.error("Failed to save data");
       }
     } catch (error) {
       console.error("Error saving data:", error);
-      alert("Error saving data");
+      toast.error("Error saving data");
     }
   };
 
