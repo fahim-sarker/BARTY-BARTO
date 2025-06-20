@@ -269,7 +269,6 @@ const AllPassengerCrew: React.FC = () => {
               </div>
             )}
 
-            {/* Passenger Dropdown */}
             {showPassengerDropdown && (
               <div
                 ref={passengerRef}
@@ -301,13 +300,13 @@ const AllPassengerCrew: React.FC = () => {
       </div>
       <Divider />
       <Table<DataType>
-        rowSelection={rowSelection} // Apply row selection configuration
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={data}
         pagination={false}
         bordered
         size="middle"
-        scroll={{ x: 1020 }} // Horizontal scroll for larger tables on smaller screens
+        scroll={{ x: 1020 }} 
       />
     </div>
   );

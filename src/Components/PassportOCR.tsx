@@ -1,10 +1,16 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import React, { useState } from "react";
+import { usePDF } from "react-to-pdf";
 
 const PassportOCR = () => {
-  const [image, setImage] = useState<File | null>(null);
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
+  console.log(toPDF);
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -14,6 +20,7 @@ const PassportOCR = () => {
       setError("");
     }
   };
+  
   const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
   const model = import.meta.env.VITE_OPENAI_MODEL;
   const handleScan = async () => {
@@ -75,6 +82,30 @@ const PassportOCR = () => {
     }
   };
 
+  const handleDownload = async () => {
+    const target = targetRef.current;
+    if (!target) return;
+
+    // Apply safe colors
+    target.classList.add("force-legacy-colors");
+
+    // Give time to apply new styles
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Create the PDF
+    const canvas = await html2canvas(target);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const width = pdf.internal.pageSize.getWidth();
+    const height = (canvas.height * width) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, width, height);
+    pdf.save("example.pdf");
+
+    // Clean up style
+    target.classList.remove("force-legacy-colors");
+  };
+
   return (
     <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
       <h2 className="text-2xl font-bold mb-4">
@@ -106,6 +137,20 @@ const PassportOCR = () => {
           </pre>
         </div>
       )}
+      <div>
+        <button onClick={handleDownload} className="cursor-pointer">
+          Download PDF
+        </button>
+        <div ref={targetRef} className="pdf-compatible">
+          <p>
+            {" "}
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi
+            possimus ducimus minus accusamus nihil inventore quo eligendi amet
+            non explicabo eaque fugiat nam hic, in, quis quasi? Corporis, earum
+            consequuntur!
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

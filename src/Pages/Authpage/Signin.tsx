@@ -10,14 +10,14 @@ import { PiSpinnerBold } from "react-icons/pi";
 type FormData = {
   email: string;
   password: string;
-  terms: boolean;
+  agree_to_terms: boolean;
 };
 
 const Signin = () => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const Axiosinstance = useAxios();
   const navigate = useNavigate();
+  const Axiosinstance = useAxios();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
     register,
@@ -34,12 +34,9 @@ const Signin = () => {
         const token = response.data.data.token;
         localStorage.setItem("authToken", token);
         toast.success("Login successful!");
-
-
         const redirectPath =
-          localStorage.getItem("redirectPath") || "/flight-stats";
+        localStorage.getItem("redirectPath") || "/flight-stats";
         localStorage.removeItem("redirectPath");
-
         setTimeout(() => {
           navigate(redirectPath);
         }, 1500);
@@ -127,13 +124,22 @@ const Signin = () => {
             <div className="flex items-center gap-x-3">
               <input
                 type="checkbox"
-                {...register("terms", { required: true })}
+                {...register("agree_to_terms", {
+                  required: "You must agree to the terms",
+                })}
                 className="w-5 h-5 rounded-[8px] appearance-none border border-black checked:bg-black cursor-pointer"
               />
+
               <p className="text-[16px] text-[#494949] font-sans">
                 Remember me
               </p>
+              {errors.agree_to_terms && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.agree_to_terms.message}
+                </p>
+              )}
             </div>
+
             <Link
               to="/forgot-password"
               className="text-[16px] text-[#494949] font-sans"
@@ -147,7 +153,7 @@ const Signin = () => {
             className="bg-[#13A6EF] py-[16px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out flex justify-center items-center gap-2"
           >
             {loading ? (
-              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+              <PiSpinnerBold className="animate-spin size-5 fill-black" />
             ) : (
               "Log In"
             )}

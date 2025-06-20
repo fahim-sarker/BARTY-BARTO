@@ -25,11 +25,11 @@ const Signup = () => {
     watch,
   } = useForm<FormData>();
 
+  const navigate = useNavigate();
+  const Axiosinstance = useAxios();
+  const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const Axiosinstance = useAxios();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: FormData) => {
     const finalData = { ...data };
@@ -218,7 +218,7 @@ const Signup = () => {
             className="bg-[#13A6EF] hover:bg-white hover:text-black transition-all duration-300 border border-[#13A6EF] text-white text-lg font-bold py-4 w-full rounded-md mt-8 cursor-pointer flex justify-center items-center"
           >
             {loading ? (
-              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+              <PiSpinnerBold className="animate-spin size-5 fill-black" />
             ) : (
               "Registration"
             )}

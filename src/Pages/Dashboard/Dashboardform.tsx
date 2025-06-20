@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { FaArrowDownLong } from "react-icons/fa6";
@@ -6,25 +6,37 @@ import { IoIosShareAlt } from "react-icons/io";
 import Tabsdata from "../../Components/Reusable/Tabsdata";
 import useAxios from "../../Hooks/UseAxios";
 import { toast } from "react-toastify";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const Dashboardform = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
   const tabsDataRef = useRef<any>(null);
   const Axiosinstance = useAxios();
+  const targetRef = useRef<HTMLDivElement>(null);
 
-  const handleSave = async () => {
-    if (!sectionRef.current) return;
+  const [eapisValue, setEapisValue] = useState("1765456");
+  const [icaoValue, setIcaoValue] = useState("ICAO Annex 9, Appendix 1");
 
-    const eapis =
-      sectionRef.current
-        .querySelector("span[data-eapis='true']")
-        ?.textContent?.trim() || "";
+  const handleDownload = async () => {
+    if (!targetRef.current) return;
+    targetRef.current.classList.add("force-legacy-colors");
 
-    const h5s = sectionRef.current.querySelectorAll(
-      "h5[contenteditable='true']"
-    );
-    const icao = h5s.length >= 2 ? h5s[1].textContent?.trim() || "" : "";
+    await new Promise(r => setTimeout(r, 100));
 
+    const canvas = await html2canvas(targetRef.current);
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("flight_declaration.pdf");
+
+    targetRef.current.classList.remove("force-legacy-colors");
+  };
+
+  const handleSaveAndDownload = async () => {
     const tabsData = tabsDataRef.current?.getEditableData() || {};
 
     const stored = localStorage.getItem("passengerData");
@@ -51,9 +63,9 @@ const Dashboardform = () => {
       arrival: tabsData.arrival || "",
       registration_number:
         tabsData.registration_number || tabsData.registration || "",
-      eapis: eapis,
+      eapis: eapisValue,
       owner: tabsData.owner || "",
-      icao: icao,
+      icao: icaoValue,
       passenger: passenger,
       pdf_file: "",
       type: "general_declaration",
@@ -64,6 +76,7 @@ const Dashboardform = () => {
       if (response.status === 200 || response.status === 201) {
         toast.success("Data saved successfully!");
         localStorage.removeItem("passengerData");
+        await handleDownload();
       } else {
         toast.error("Failed to save data");
       }
@@ -76,30 +89,42 @@ const Dashboardform = () => {
   return (
     <>
       <section
-        ref={sectionRef}
-        className="bg-[#FFF] 2xl:px-[60px] px-8 2xl:py-[100px] py-12"
+        ref={targetRef}
+        className="bg-[#FFF] 2xl:px-[60px] px-8 2xl:py-[100px] py-12 pdf-compatible"
       >
         <div className="2xl:flex justify-between">
           <h5 className="font-sans font-normal 2xl:text-[24px] lg:text-[22px] text-[18px] text-[#222] 2xl:text-start text-center">
             EAPIS:{" "}
-            <span
-              contentEditable={true}
-              data-eapis="true"
-              className="text-[#E90B0B]"
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={e =>
+                setEapisValue(e.currentTarget.textContent?.trim() || "")
+              }
+              className="text-[#E90B0B] outline-none inline-block"
             >
-              1765456
-            </span>
+              {eapisValue}
+            </div>
           </h5>
+
           <h2 className="font-sans font-bold 2xl:text-[48px] lg:text[35px] text-[22px] text-[#222] 2xl:text-end text-center">
             GENERAL DECLARATION
           </h2>
-          <h5
-            contentEditable={true}
-            className="font-sans font-normal 2xl:text-[24px] lg:text-[22px] text-[18px] text-[#222] 2xl:text-start text-center"
-          >
-            ICAO Annex 9, Appendix 1
+
+          <h5 className="font-sans font-normal 2xl:text-[24px] lg:text-[22px] text-[18px] text-[#222] 2xl:text-start text-center">
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={e =>
+                setIcaoValue(e.currentTarget.textContent?.trim() || "")
+              }
+              className="outline-none inline-block"
+            >
+              {icaoValue}
+            </div>
           </h5>
         </div>
+
         <div className="flex justify-center">
           <Tabs className="w-full">
             <TabList className="flex gap-x-5 border-b border-[#E0E0E0] w-fit mx-auto">
@@ -120,6 +145,7 @@ const Dashboardform = () => {
           </Tabs>
         </div>
       </section>
+
       <div className="flex flex-col md:flex-col lg:flex-row gap-4 md:gap-4 lg:gap-x-6 justify-center lg:justify-end items-center pt-5 pb-20">
         <button
           className="w-full md:w-auto px-[38px] py-3 hover:bg-[#13A6EF] hover:text-white duration-300 ease-in-out 
@@ -128,8 +154,9 @@ const Dashboardform = () => {
           Share
           <IoIosShareAlt />
         </button>
+
         <button
-          onClick={handleSave}
+          onClick={handleSaveAndDownload}
           className="w-full md:w-auto px-[38px] py-3 rounded-[3px] bg-[#13A6EF] border border-[#13A6EF] hover:bg-white
           hover:text-black duration-300 ease-in-out font-sans text-[15px] font-bold cursor-pointer text-white flex justify-center items-center gap-x-3"
         >

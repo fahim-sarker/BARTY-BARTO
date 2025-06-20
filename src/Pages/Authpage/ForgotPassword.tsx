@@ -11,8 +11,8 @@ type FormData = {
 };
 
 const ForgotPassword = () => {
-  const Axiosinstance = useAxios();
   const navigate = useNavigate();
+  const Axiosinstance = useAxios();
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -88,7 +88,7 @@ const ForgotPassword = () => {
             className="bg-[#13A6EF] md:px-[100px] px-[50px] py-[18px] mt-10 text-white font-bold font-sans text-[18px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out flex justify-center items-center gap-2"
           >
             {loading ? (
-              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+              <PiSpinnerBold className="animate-spin size-5 fill-black" />
             ) : (
               "Send Code"
             )}

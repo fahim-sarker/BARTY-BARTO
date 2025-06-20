@@ -22,7 +22,7 @@ interface User {
 }
 
 type ProfileFormValues = {
-  name: string;
+  first_name: string;
   lastName: string;
   email: string;
   phone: string;
@@ -59,7 +59,7 @@ const ProfileForm = () => {
   useEffect(() => {
     if (user) {
       reset({
-        name: user.first_name,
+        first_name: user.first_name,
         lastName: user.last_name,
         email: user.email,
         phone: user.phone,
@@ -103,7 +103,7 @@ const ProfileForm = () => {
 
   const onSubmit = async (data: ProfileFormValues) => {
     const formData = new FormData();
-    formData.append("name", data.name);
+    formData.append("first_name", data.first_name);
     formData.append("last_name", data.lastName);
     formData.append("email", data.email);
     formData.append("phone", data.phone.replace(/\D/g, ""));
@@ -146,22 +146,24 @@ const ProfileForm = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
- 
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               First name
             </h3>
             <input
-              {...register("name", { required: "First name is required" })}
+              {...register("first_name", {
+                required: "First name is required",
+              })}
               placeholder="Charli"
               className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
-            {errors.name && (
-              <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>
+            {errors.first_name && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.first_name.message}
+              </p>
             )}
           </div>
 
-     
           <div>
             <h3 className="text-[18px] font-medium text-[#222] pb-2">
               Last name
@@ -191,6 +193,7 @@ const ProfileForm = () => {
                 },
               })}
               placeholder="charlicurs@gmail.com"
+              readOnly
               className="border border-[#CFCFCF] rounded-[8px] py-3 px-6 text-[#3F3F3F] text-[16px] w-full"
             />
             {errors.email && (
