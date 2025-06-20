@@ -1,8 +1,47 @@
 import { useState } from "react";
 import PassportOCR from "../../Components/PassportOCR";
+import useAxios from "../../Hooks/UseAxios";
+import { toast } from "react-toastify";
 
 const Signature = () => {
+  const AxiosInstance = useAxios();
+  const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFile(e.target.files?.[0] || null);
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      toast.error("Please select a file first");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("signature", file);
+
+      const response = await AxiosInstance.post("/signature", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success("Signature uploaded successfully!");
+        setFile(null);
+      } else {
+        toast.error("Failed to upload signature");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Error uploading signature");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <section className="px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6">
@@ -15,7 +54,7 @@ const Signature = () => {
         Declaration and in any supplementary forms required to be presented with
         this General Declaration are complete and true to the best of my
         knowledge and that all through passengers will continue/have continued
-        on the flight
+        on the flight.
       </p>
 
       <h4 className="text-[20px] sm:text-[22px] md:text-[24px] text-[#222] font-sans font-medium">
@@ -28,7 +67,7 @@ const Signature = () => {
           type="file"
           accept=".pdf,.png,.jpg,.jpeg"
           className="hidden"
-          onChange={e => setFile(e.target.files?.[0] || null)}
+          onChange={handleFileChange}
         />
 
         <div
@@ -78,7 +117,7 @@ const Signature = () => {
                     e.stopPropagation();
                     document.getElementById("fileUpload")?.click();
                   }}
-                  className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-[10px] text-sm transition-all"
+                  className="mt-2 bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-6 py-3 rounded-[10px] text-sm transition-all"
                 >
                   Upload Files
                 </button>
@@ -89,10 +128,15 @@ const Signature = () => {
       </div>
 
       <div className="flex justify-end mb-6 sm:mb-8">
-        <button className="bg-blue-500 hover:bg-blue-600 font-sans text-white px-6 sm:px-8 py-3 rounded-[10px] text-sm">
-          Save Signature
+        <button
+          onClick={handleUpload}
+          disabled={uploading}
+          className="bg-blue-500 hover:bg-blue-600 font-sans text-white px-6 sm:px-8 py-3 rounded-[10px] text-sm  cursor-pointer disabled:opacity-50"
+        >
+          {uploading ? "Uploading..." : "Save Signature"}
         </button>
       </div>
+
       <PassportOCR />
     </section>
   );

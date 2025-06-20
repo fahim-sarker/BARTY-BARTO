@@ -1,6 +1,7 @@
 import { forwardRef, useRef, useImperativeHandle } from "react";
+import useFetchData from "../../Hooks/UseFetchData";
 
-const data = [
+const dataa = [
   {
     nationality: "USA",
     detail: "Crew: Nicolas M Van Hauck, 28 JAN 1990, 565789374",
@@ -23,7 +24,22 @@ const data = [
   },
 ];
 
+type SignatureResponse = {
+  data: {
+    signature: string;
+  };
+  code: number;
+};
+
+
 const Tabsdata = forwardRef((props, ref) => {
+  
+  const { data } = useFetchData < SignatureResponse>("/signature");
+  console.log(data, "jhikhioo");
+  console.log(`${import.meta.env.VITE_BASE_URL}/${data?.data?.signature}`);
+
+  
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
@@ -136,7 +152,7 @@ const Tabsdata = forwardRef((props, ref) => {
             Nationality
           </h3>
           <ul>
-            {data.map((item, index) => (
+            {dataa.map((item, index) => (
               <li
                 key={index}
                 contentEditable={true}
@@ -155,7 +171,7 @@ const Tabsdata = forwardRef((props, ref) => {
             Crew / Passenger Details
           </h3>
           <ul>
-            {data.map((item, index) => (
+            {dataa.map((item, index) => (
               <li
                 key={index}
                 contentEditable={true}
@@ -262,9 +278,22 @@ const Tabsdata = forwardRef((props, ref) => {
       </div>
 
       <div className="mt-20">
-        <h5 className="text-lg sm:text-xl font-medium font-sans text-end">
-          Signature.............................
-        </h5>
+        {data?.data?.signature ? (
+          <div className="flex justify-end">
+            <img
+              src={`${import.meta.env.VITE_BASE_IMG_URL}/${
+                data.data.signature
+              }`}
+              alt="Signature"
+              className="h-[60px] object-contain"
+            />
+          </div>
+        ) : (
+          <h5 className="text-lg sm:text-xl font-medium font-sans text-end">
+            Signature.............................
+          </h5>
+        )}
+
         <h4 className="font-sans text-xl sm:text-2xl mt-5 font-semibold text-[#222] text-end">
           Authorized Agent or Pilot-in Command
         </h4>

@@ -11,8 +11,8 @@ type FormData = {
 };
 
 const ForgotPassword = () => {
-  const Axiosinstance = useAxios();
   const navigate = useNavigate();
+  const Axiosinstance = useAxios();
   const [loading, setLoading] = useState<boolean>(false);
 
   const {

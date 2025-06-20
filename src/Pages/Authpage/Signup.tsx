@@ -25,11 +25,11 @@ const Signup = () => {
     watch,
   } = useForm<FormData>();
 
+  const navigate = useNavigate();
+  const Axiosinstance = useAxios();
+  const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const Axiosinstance = useAxios();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: FormData) => {
     const finalData = { ...data };

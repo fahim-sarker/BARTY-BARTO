@@ -11,18 +11,16 @@ import useAxios from "../../Hooks/UseAxios";
 import { PiSpinnerBold } from "react-icons/pi";
 
 const Verification = () => {
-  const [otp, setOtp] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const { handleSubmit } = useForm();
-
+  const resendAvailable = true;
   const location = useLocation();
   const navigate = useNavigate();
+  const Axiosinstance = useAxios();
+  const { handleSubmit } = useForm();
+  const [otp, setOtp] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const queryParams = new URLSearchParams(location.search);
   const email = queryParams.get("email") || "your email";
-  const Axiosinstance = useAxios();
 
-  const resendAvailable = true;
 
   const onSubmit = async () => {
     if (otp.length !== 6) {

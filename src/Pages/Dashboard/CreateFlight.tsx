@@ -18,22 +18,18 @@ type FlightData = {
 };
 
 const CreateFlight = () => {
-
-  const [events, setEvents] = useState<EventInput[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [note, setNote] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [flightDataMap, setFlightDataMap] = useState<Record<string, FlightData>>({});
-  
-  
-  const calendarRef = useRef<FullCalendar | null>(null);
-  const today = format(new Date(), "yyyy-MM-dd");
   const navigate = useNavigate();
-
-  const [image, setImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const today = format(new Date(), "yyyy-MM-dd");
+  const [file, setFile] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const calendarRef = useRef<FullCalendar | null>(null);
+  const [events, setEvents] = useState<EventInput[]>([]);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [flightDataMap, setFlightDataMap] = useState<Record<string, FlightData>>({});
   console.log(error);
 
   useEffect(() => {

@@ -11,11 +11,9 @@ const AccountConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const Axiosinstance = useAxios();
-
   const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [resending, setResending] = useState<boolean>(false);
-
   const email = new URLSearchParams(location.search).get("email") || "";
 
   const {

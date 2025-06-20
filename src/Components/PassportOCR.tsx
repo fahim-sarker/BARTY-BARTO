@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { usePDF } from "react-to-pdf";
 
 const PassportOCR = () => {
-  const [image, setImage] = useState<File | null>(null);
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
   const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
   console.log(toPDF);
   
@@ -20,6 +20,7 @@ const PassportOCR = () => {
       setError("");
     }
   };
+  
   const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
   const model = import.meta.env.VITE_OPENAI_MODEL;
   const handleScan = async () => {

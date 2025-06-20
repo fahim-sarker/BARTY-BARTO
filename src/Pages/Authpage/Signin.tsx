@@ -14,10 +14,10 @@ type FormData = {
 };
 
 const Signin = () => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const Axiosinstance = useAxios();
   const navigate = useNavigate();
+  const Axiosinstance = useAxios();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
     register,
@@ -34,12 +34,9 @@ const Signin = () => {
         const token = response.data.data.token;
         localStorage.setItem("authToken", token);
         toast.success("Login successful!");
-
-
         const redirectPath =
-          localStorage.getItem("redirectPath") || "/flight-stats";
+        localStorage.getItem("redirectPath") || "/flight-stats";
         localStorage.removeItem("redirectPath");
-
         setTimeout(() => {
           navigate(redirectPath);
         }, 1500);
