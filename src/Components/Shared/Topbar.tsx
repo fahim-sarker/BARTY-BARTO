@@ -30,16 +30,18 @@ const Topbar = () => {
             <img src={Logo} alt="Logo" className="w-fit h-fit" />
           </Link>
         </figure>
-        <div className="flex gap-x-6 border-l border-[#F0F0FA] items-center pl-5">
-          <img
-            src={avatarSrc}
-            alt="Avatar"
-            className="h-[56px] w-[56px] rounded-full object-cover"
-          />
-          <h4 className="text-[#161C24] font-sans font-medium text-[20px]">
-            {fullName || "User"}
-          </h4>
-        </div>
+        <Link to="/settings">
+          <div className="flex gap-x-6 border-l border-[#F0F0FA] items-center pl-5">
+            <img
+              src={avatarSrc}
+              alt="Avatar"
+              className="h-[56px] w-[56px] rounded-full object-cover"
+            />
+            <h4 className="text-[#161C24] font-sans font-medium text-[20px]">
+              {fullName || "User"}
+            </h4>
+          </div>
+        </Link>
       </div>
     </nav>
   );
