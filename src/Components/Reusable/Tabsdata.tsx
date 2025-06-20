@@ -32,7 +32,7 @@ type SignatureResponse = {
 };
 
 
-const Tabsdata = forwardRef((props, ref) => {
+const Tabsdata = forwardRef((_, ref) => {
   
   const { data } = useFetchData < SignatureResponse>("/signature");
   console.log(data, "jhikhioo");
