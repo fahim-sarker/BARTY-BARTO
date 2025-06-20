@@ -9,6 +9,8 @@ const PassportOCR = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
+  console.log(toPDF);
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

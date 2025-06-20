@@ -111,7 +111,7 @@ const AccountConfirmation = () => {
             className="bg-[#13A6EF] lg:px-[100px] px-[40px] lg:py-[18px] py-[15px] mt-10 text-white font-bold font-sans lg:text-[18px] text-[16px] rounded-[8px] w-full cursor-pointer border border-[#13A6EF] hover:bg-white hover:text-black duration-300 ease-in-out flex items-center justify-center gap-2"
           >
             {loading ? (
-              <PiSpinnerBold className="animate-spin size-5 fill-white" />
+              <PiSpinnerBold className="animate-spin size-5 fill-black" />
             ) : (
               "Confirm Code"
             )}

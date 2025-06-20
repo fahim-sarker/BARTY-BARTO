@@ -93,7 +93,7 @@ const Signature = () => {
           Save Signature
         </button>
       </div>
-      <PassportOCR/>
+      <PassportOCR />
     </section>
   );
 };

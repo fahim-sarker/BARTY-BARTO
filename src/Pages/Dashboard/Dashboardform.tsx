@@ -33,7 +33,6 @@ const Dashboardform = () => {
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save("flight_declaration.pdf");
 
-    // Remove the fix class after done
     targetRef.current.classList.remove("force-legacy-colors");
   };
 
@@ -77,7 +76,7 @@ const Dashboardform = () => {
       if (response.status === 200 || response.status === 201) {
         toast.success("Data saved successfully!");
         localStorage.removeItem("passengerData");
-        await handleDownload(); 
+        await handleDownload();
       } else {
         toast.error("Failed to save data");
       }
