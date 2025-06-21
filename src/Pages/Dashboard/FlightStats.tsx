@@ -6,9 +6,9 @@ import {
   RocketOutlined,
   CheckCircleOutlined,
   FilePdfOutlined,
-} from "@ant-design/icons"; // Import PDF icon
+} from "@ant-design/icons"; 
 
-// Menu for Dropdown (File Actions)
+
 const menu = (
   <Menu>
     <Menu.Item key="1">Download</Menu.Item>
@@ -16,7 +16,6 @@ const menu = (
   </Menu>
 );
 
-// Upcoming Flight Table Columns
 const columns = [
   {
     title: "Flight No.",
@@ -36,14 +35,13 @@ const columns = [
   },
 ];
 
-// Recent Gen Dec Table Columns
 const recentColumns = [
   {
     title: "File Name",
     dataIndex: "fileName",
     render: (text: string) => (
       <span className="flex items-center gap-2">
-        <FilePdfOutlined style={{ color: "#FF0000" }} /> {/* PDF Icon */}
+        <FilePdfOutlined style={{ color: "#FF0000" }} /> 
         {text}
       </span>
     ),

@@ -1,12 +1,12 @@
-import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Authbg from "/authbg.jpg";
-import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import useAxios from "../../Hooks/UseAxios";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PiSpinnerBold } from "react-icons/pi";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 type FormData = {
   first_name: string;
