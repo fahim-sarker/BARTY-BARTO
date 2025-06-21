@@ -22,7 +22,7 @@ const AccountConfirmation = () => {
   } = useForm();
   
   const onSubmit = async () => {
-    if (otp.length !== 6) {
+    if (otp.length !== 6) { 
       toast.error("Please enter the complete 6-digit code.");
       return;
     }
