@@ -41,8 +41,8 @@ const ProfileForm = () => {
   });
 
   const axiosInstance = useAxios();
-  const fileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -53,7 +53,6 @@ const ProfileForm = () => {
 
   const { data } = useFetchData<{ data: User }>("/users/data");
   const user = data?.data;
-
   const baseApiUrl = import.meta.env.VITE_BASE_URL.replace(/\/api\/?$/, "");
 
   useEffect(() => {
