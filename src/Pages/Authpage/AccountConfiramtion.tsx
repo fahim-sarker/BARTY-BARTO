@@ -116,7 +116,7 @@ const AccountConfirmation = () => {
           </button>
 
           <p className="text-[#5A5C5F] font-sans font-normal pt-5 text-center">
-            Didn’t receive the code?{" "}
+            Didn’t receive the code?
             <button
               type="button"
               onClick={handleResend}
