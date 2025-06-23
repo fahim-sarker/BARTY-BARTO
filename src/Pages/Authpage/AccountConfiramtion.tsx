@@ -20,9 +20,9 @@ const AccountConfirmation = () => {
     handleSubmit,
     formState: {},
   } = useForm();
-
+  
   const onSubmit = async () => {
-    if (otp.length !== 6) {
+    if (otp.length !== 6) { 
       toast.error("Please enter the complete 6-digit code.");
       return;
     }
@@ -58,7 +58,7 @@ const AccountConfirmation = () => {
 
       if (response.data.success) {
         toast.success("OTP resent successfully!");
-        setOtp(""); 
+        setOtp("");
       } else {
         toast.error(response.data.message || "Failed to resend OTP.");
       }
@@ -116,7 +116,7 @@ const AccountConfirmation = () => {
           </button>
 
           <p className="text-[#5A5C5F] font-sans font-normal pt-5 text-center">
-            Didn’t receive the code?{" "}
+            Didn’t receive the code?
             <button
               type="button"
               onClick={handleResend}
