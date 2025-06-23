@@ -19,6 +19,5 @@ function useAxios(token: string | null = null): AxiosInstance {
 
   return axiosInstance;
 }
-
 export default useAxios;
 
